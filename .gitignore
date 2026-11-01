@@ -1,0 +1,18 @@
+# MacOS
+.DS_Store
+.localized
+__MACOSX/
+.AppleDouble
+.LSOverride
+Icon[]
+._*
+
+# vsCode
+.vscode
+
+node_modules/
+*.tsbuildinfo
+*.log
+.env
+.env.*
+!.env.example
