@@ -1,0 +1,43 @@
+
+You should address the following questions:
+
+The expected level of achievement and effort for each team member (what grades do you expect to get? how much time do you plan to put in?)
+
+Keti A 10hours
+Fidan A 12hours
+Raleigh Pass 6hours
+Silk A 10hours
+
+
+Personal goals for each team member (building a great app? learning a particular skill?);
+
+Keti - Imrove software engineering skills and build something interesting
+Fidan - building something cool and working in a team efficiently so we communicate efficiently and imrove softskills
+Raleigh - getting better at versino control in a team project with small and fast team
+Silk - Build something we care about,
+
+We decided to do one branch per merge request. Put our name and feature we are working on.
+
+Frequency, length and location of team meetings
+Meeting Nov 3rd on 8:30 - 9:30 (flexible)  on Zoom. Come up with at least 3 ideas to the meeting.
+Also communicating using imessages for quick follow ups.
+twice a week one hour days might be adjusted based on the deadlines.
+
+How quality of work will be maintained (reviewing each others’ code? team review meetings? pair programming?);
+async code review
+feature testing
+
+
+How tasks will be assigned, and what to do if deadlines are missed;
+We are going to backglog for tracking tasks for each member
+we are going to create tasks on backglog and then discuss how to assign it to each person. If there is a debate we can randomize it.
+If deadlines are missed we will have meeting and discuss how to get back to track as soon as possible.
+If you are busy just let us know
+
+How decisions will be made and any disagreements resolved.
+
+Discuss it and come to concessus
+We will try to find something which satisfies everyones ideas
+We will have 50 points and divide points into ideas and then decide how
+
+Because of its potentially personal nature, you should not place your team contract in your team repo. Instead, you should place it in the personal repo of one of the team members and submit that.
