@@ -8,11 +8,11 @@ The scenarios below follow two people:
 
 ## Bad situation 1: Choice overload
 
-Keti decides she would rather join a startup than spend another summer at a big tech company. She doesn't know any founders personally, so she tries a web search, asks a few friends, and then turns to her university's resources. MIT Orbit's "Launchpad of ideas and startups" lists roughly **500 teams**, but most entries show only a name, a tag and maybe one line of description. Nothing on the list tells her whether a team is looking for someone like her, how much time they expect, or whether the founders care about the same problems she does.
+Keti decides she would rather join a startup. She doesn't know any founders personally, so she tries a web search, asks a few friends, and then turns to her university's resources. MIT Orbit's "Launchpad of ideas and startups" lists many teams, but most entries show only a name, a tag and maybe one line of description. Nothing on the list tells her whether a team is looking for someone like her, how much time they expect, or whether the founders care about the same problems she does.
 
-To find a good match, Keti would have to click into listings one by one, read each description, and then try to work out who the people behind it are. After a dozen or so she still hasn't found a clear fit, and the list doesn't seem to get any shorter. She gets overwhelmed and either reaches out to a team that is "good enough" or gives up and accepts the big-tech offer.
+To find a good match, Keti would have to click into listings one by one, read each description, and then try to work out who the people behind it are. After a dozen or so she still hasn't found a clear fit, and the list doesn't seem to get any shorter. She gets overwhelmed and either reaches out to a team that is "good enough" or gives up completely.
 
-**Why this is a bad situation:** a motivated builder who wants to join a startup ends up not joining one, or joins a poor fit that is likely to fall apart. Founders lose a candidate they never knew existed. The cost comes from the effort and lack of signal in the search, not from any missing feature.
+**Why this is a bad situation:** a motivated builder who wants to join a startup ends up not joining one, or joins a poor fit. Founders lose a candidate they never knew existed. The cost comes from the effort and lack of signal in the search, not from any missing feature.
 
 ## Bad situation 2: The right people are one T stop away
 
