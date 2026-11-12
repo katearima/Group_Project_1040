@@ -16,6 +16,8 @@ From Silk: what's your favorite food! Do you cook too?
 
 From Derp7777: who is your dearest and most powerful blorbo?\
 A: dis wun
+<img width="743" height="743" alt="qibi" src="https://github.com/user-attachments/assets/49b610c1-7199-42ea-b84e-9e7fe1e8c758" />
+
 
 ## Derp7777
 
