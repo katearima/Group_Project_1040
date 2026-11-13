@@ -17,11 +17,27 @@ Handshake and platforms like it can feel emotionally inaccessible and anxiety in
 
 ## LinkedIn
 
+Obstacles: high stakes
+
+While LinkedIn is more human centric and has a focus on profile sharing, the user experience is modeled in a high-stakes and selective environment. One creates one's LinkedIn profile with the understanding that one will be evaluated, by companies or by peers, based on its content. This can lead to varying levels of unhealthy comparisons between users.
+
 ## MIT Orbit & Local Initiatives
+
+Obstacles: difficult to access, not human centric
+
+In our direct vicinity, we have seen several initiatives to help aspiring graduates find a job match. MIT Orbit from the Sloan School, for example, is a platform listing startups. Recently, we also found [this website](https://www.jobsrunway.com). However, these platforms operate similar to Handshake and still function as "advertisement hubs" and "application portals," just geared towards nascent startups. Our app deviates from this approach and focuses on fostering connections between the humans behind the company names.
 
 ## Dormspam
 
-## Public Events
+Obstacles: difficult to access
+
+Every so often, we see startup recruitment emails broadcast over MIT's Dormspam service. Dormspam emails not only fail to reach most of its intended audience, but also get easily lost in students' inboxes. Moreover, they are decentralized, unsystematic, and difficult to recover at a later date. Our app seeks to achieve the dormspam effect via an easy-to-access, ready-on-the-screen platform.
+
+## Public Advertising Events
+
+Obstacles: difficult to access, (sometimes) not human-centric
+
+Public advertising events are great as a one-time treat, but they are difficult to access for the organizational effort on the company's part and the extremely low frequency at which they occur. Also, in some cases, public events can feel more like a formality, or sitting through a fancy ad, and this format of publicity fail to foster real connection between interested applicants and the company.
 
 ## Word of Mouth
 
@@ -29,4 +45,4 @@ Arguably the most effective workaround, and in a formal setting, this might be t
 
 ## Conclusion
 
-All above accounted, while many channels exist for aspiring workers to find opportunities, we don't believe a human-centric application exists in our immediate community to help bridge the gap between a first-time applicant and the vast, pressurizing, high-stakes environment of real job-search platforms. We hope our matchmaker can act as a stepping stone for real, talented young adults to come together and inspire each other.
+All above accounted, while many channels exist for aspiring workers to find opportunities, we don't believe a human-centric application exists in our immediate community to help bridge the gap between a first-time applicant and the vast, pressurizing, high-stakes environment of real job-search platforms. We hope our matchmaker can act as a stepping stone for talented young adults to come together and inspire each other.
