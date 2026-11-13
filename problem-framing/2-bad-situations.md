@@ -1,6 +1,6 @@
 # 2. Bad Situations
 
-*Author: Fidan Huseynova*
+> One or more bad situations that arise in the domain and that call for a design intervention.
 
 The scenarios below follow two people:
 - **Keti**, an MIT student who wants to make an impact by joining an early-stage startup.

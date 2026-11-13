@@ -2,9 +2,6 @@
 
 > An outline of a plausible solution. This is not a detailed design, and a visual sketch is optional.
 
-
-*Author: Ketevan Peranidze*
-
 Our idea is to build a **startup matching platform for university students in the Boston area**, where co-founders looking for teammates and students looking to work at startups can find each other based on shared interests, skills, and preferences.
 
 Instead of scrolling through hundreds of startup listings and trying to figure out which one might be a good fit, students would be able to discover people and ideas that actually match what they are looking for.

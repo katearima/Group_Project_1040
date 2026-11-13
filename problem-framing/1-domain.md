@@ -1,6 +1,6 @@
 # 1. Domain
 
-*Author: Fidan Huseynova*
+> An explanation of the domain, or general area, in which the problem lies.
 
 **Domain: forming early-stage startup teams among university students in the Boston area.**
 
