@@ -3,9 +3,9 @@
 > Identification of stakeholders and the impacts they might experience in the short and long term, using value-sensitive design (see the course's final-project ethical analysis instructions).
 
 
-## Stakehoders
+## Stakeholders
 
-### Direct Stakehoders
+### Direct Stakeholders
 
 #### Startup Founders
 **Goals** may include: Find fellow founders and founding employees that can share their vision; develop their product; grow their business
@@ -57,9 +57,8 @@ If successful and pervasive, our platform could fundamentally change how startup
 
 
 ## Insights
-
 1. Observation: algorithmic matching of a large pool of users could lead to users who are not actually founders or builders using the platform to find each other. Response: add mechanisms to identify and remove profiles that are not indicative of someone looking to found or join a startup, such as a way to report profiles and/or automated analysis of profiles.
-2. Observation: entrepreneurship programs may consider the platform to be 'in competition' with them, and may discourage its use over in-house sloutions. Response: add mechanisms to integrate with existing platforms and give users the option to preference matches associated with programs they are a member of.
+2. Observation: entrepreneurship programs may consider the platform to be 'in competition' with them, and may discourage its use over in-house solutions. Response: add mechanisms to integrate with existing platforms and give users the option to preference matches associated with programs they are a member of.
 3. Observation: the platform may 'starve' non-startup businesses of fresh talent. Response: if the platform is big enough and pervasive enough to warrant it, integrations and partnerships with non-startup businesses could be considered to ameliorate the problem by matching prospective employees with them directly.
 4. Observation: algorithmic matching is counter to intuitions supporting 'natural' or 'organic' networking and connections, such as through chance meetings or shared event attendance. Response: add mechanisms to integrate with particular events, allowing verified attendees to tag themselves as having attended so matches can bond over having both attended even if they never met at the event.
 5. Observation: knowing that a startup's founding team was connected mostly or entirely through our platform/via algorithmic matching could cause people (especially prospective customers and investors) to make assumptions or cast aspersions on the startup, to their detriment. Response: ensure that matches are always private and that there are no publicly accessible logs that could prove that any pair of individuals met via our platform, allowing the users to choose whether or not they wanted to disclose how they met.
