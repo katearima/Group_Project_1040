@@ -11,8 +11,6 @@ Sprint 4: 12/01 - 12/07. MVP and user testing.
 
 Individual sprints will be managed via [the following backlog](https://docs.google.com/spreadsheets/d/1XkOPBRA-6CLnmeJ0T4gd80OykMGjANjbTzZeELhs754/edit?usp=sharing). Backlog entries consist of features, and the tasklist for each week further granularizes each feature's implementation timeline. Among other things, each entry is assigned a priority and the person in charge.
 
-The final sheet in the above document is a visual summary of our production timeline, broken down by week.
-
 ## Implementation Risks
 
 | Risk                              | Feature        | Description                                                                                                                                                                                   | Fallback Strategy                                                                                                                                                                                          |
