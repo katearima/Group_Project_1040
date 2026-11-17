@@ -16,7 +16,7 @@ Founders also describe their startup idea and what kind of teammates they need.
 
 Both sides can also enter their matching preferences during the same setup process. These preferences belong to Recommending, which uses them to decide which people to show first.
 
-For example, Keti is an MIT student interested in working at an early-stage startup. She creates a profile, adds her software engineering skills, and indicates that she is interested in data tools and can commit 10 hours per week.
+For example, Keti is an MIT student interested in working at an early-stage startup. She creates a profile, adds her software engineering skills, and indicates that she is interested in data tools.
 
 Bumba is a BU student with a startup idea. He creates a founder profile describing his idea and the skills he needs in a co-founder.
 
@@ -44,7 +44,6 @@ state
     a location String
     a latitude Number
     a longitude Number
-    an availabilityHours Number
     an optional startupPitch String
     a visible Flag
 
@@ -57,9 +56,11 @@ state
   Rule: A visible profile meets the publication requirements below.
 ```
 
-The location is a named place, such as a campus or neighborhood, with latitude and longitude in degrees. It does not need to be a home address. Coordinates must be valid even while a profile is hidden.
+The user's name will be in the form \[First] \[Last initial]. We deliberately obfuscate last names to prevent race/ethnicity based discrimination.
 
-For a profile to be published, its name, university, major, and location must contain nonempty text, and its skills and interests must each contain at least one nonempty entry. Graduation year must be a positive whole number, and availability must be zero or more hours per week. Experience can be empty. Founders must also have a nonempty startup pitch.
+The location is a named place, such as a campus or neighborhood, with latitude and longitude in degrees. It does not need to be a home address. Coordinates must be valid even while a profile is hidden. Coordiates are not shared publicly for security but used on the backend to determine proximity.
+
+For a profile to be published, its name and location must contain nonempty text, and its skills and interests must each contain at least one nonempty entry. Users will be highly recommended to include university, major, and graduation year information. Experience can be empty. Founders must also have a nonempty startup pitch.
 
 Here and below, text containing only spaces counts as empty. Skill and interest entries cannot be empty. Draft profiles can have empty text fields or empty sets until they are ready to be published.
 
@@ -81,10 +82,8 @@ createProfile(
   location: String,
   latitude: Number,
   longitude: Number,
-  availabilityHours: Number
 )
   where user does not already have a profile
-  and availabilityHours is nonnegative
   and graduationYear is a positive whole number
   and latitude and longitude are within their allowed ranges
   and every supplied skill and interest entry is nonempty
@@ -109,7 +108,6 @@ setStartupPitch(user: User, pitch: String)
 ```text
 updateProfile(user: User, information: ProfileData)
   where user has a profile
-  and information has nonnegative availabilityHours
   and information has a positive whole-number graduationYear
   and its latitude and longitude are within their allowed ranges
   and every supplied skill and interest entry is nonempty
@@ -120,7 +118,7 @@ updateProfile(user: User, information: ProfileData)
     keep the owner, role, startupPitch, and visibility unchanged
 ```
 
-Here, `ProfileData` is a value containing `name: String`, `university: String`, `major: String`, `graduationYear: Number`, `skills: set of String`, `experience: String`, `interests: set of String`, `location: String`, `latitude: Number`, `longitude: Number`, and `availabilityHours: Number`. All these fields are supplied when updating a profile. It does not include owner, role, startup pitch, preferences, or visibility. Startup pitches are changed only through `setStartupPitch`.
+Here, `ProfileData` is a value containing `name: String`, `university: String`, `major: String`, `graduationYear: Number`, `skills: set of String`, `experience: String`, `interests: set of String`, `location: String`, `latitude: Number`, and `longitude: Number`. All these fields are supplied when updating a profile. It does not include owner, role, startup pitch, preferences, or visibility. Startup pitches are changed only through `setStartupPitch`.
 
 **publishProfile**
 
@@ -143,7 +141,7 @@ hideProfile(user: User)
 
 ### Queries
 
-**_getProfile**
+**\_getProfile**
 
 ```text
 _getProfile(user: User): optional (profile: Profile)
@@ -151,7 +149,7 @@ _getProfile(user: User): optional (profile: Profile)
 
 Returns the user's profile, or no result if it does not exist.
 
-**_getVisibleProfiles**
+**\_getVisibleProfiles**
 
 ```text
 _getVisibleProfiles(): many (profile: Profile)
@@ -214,9 +212,9 @@ state
   Rule: Scores are between 0 and 1.
 ```
 
-Empty preference sets mean that the user has not selected a preference. An absent preferred distance means there is no distance preference, and an absent preferred availability means there is no minimum time commitment. Distance is measured in kilometers, and availability is measured in hours per week. A user who has never saved preferences uses these same defaults.
+Empty preference sets mean that the user has not selected a preference. An absent preferred distance means there is no distance preference, and an absent preferred availability means there is no minimum time commitment. Distance is measured in kilometers. A user who has never saved preferences uses these same defaults.
 
-`RecommendationData` is a value containing `skills: set of String`, `interests: set of String`, `university: String`, `latitude: Number`, `longitude: Number`, and `availabilityHours: Number`. Its sets contain nonempty entries, its university is nonempty, latitude is between -90 and 90, longitude is between -180 and 180, and availability is nonnegative. These are copies of relevant information supplied to an action, not profile objects that Recommending can look inside or change.
+`RecommendationData` is a value containing `skills: set of String`, `interests: set of String`, `university: String`, `latitude: Number`, and `longitude: Number`. Its sets contain nonempty entries, its university is nonempty, latitude is between -90 and 90, longitude is between -180 and 180, and availability is nonnegative. These are copies of relevant information supplied to an action, not profile objects that Recommending can look inside or change.
 
 ### How the Score Is Calculated
 
@@ -331,7 +329,7 @@ deactivateRecommendation(
 
 ### Queries
 
-**_getFeed**
+**\_getFeed**
 
 ```text
 _getFeed(viewer: User):
@@ -342,7 +340,7 @@ Returns only recommendations whose viewer is the supplied viewer, where `eligibl
 
 Profiles marked `PASSED` or `INTERESTED` are excluded from the feed. Profiles marked `SEE_LATER` are excluded until a new browsing session. A new browsing session begins when the user opens discovery after leaving it; refreshing the current feed does not start a new session.
 
-**_getPreferences**
+**\_getPreferences**
 
 ```text
 _getPreferences(user: User): optional (preferences: Preference)
@@ -440,7 +438,7 @@ unmatch(user: User, other: User)
 
 ### Queries
 
-**_getInterestedInYou**
+**\_getInterestedInYou**
 
 ```text
 _getInterestedInYou(user: User):
@@ -449,7 +447,7 @@ _getInterestedInYou(user: User):
 
 Returns all users with an INTERESTED decision about the given user, excluding people the user has already passed on or matched with. Returns no results when there are none, including an unknown user. Their order is unspecified.
 
-**_getMatches**
+**\_getMatches**
 
 ```text
 _getMatches(user: User):
@@ -543,7 +541,7 @@ dismissNotification(
 
 ### Queries
 
-**_getNotifications**
+**\_getNotifications**
 
 ```text
 _getNotifications(user: User):
@@ -552,7 +550,7 @@ _getNotifications(user: User):
 
 Returns the user's notifications, excluding dismissed notifications, ordered from newest to oldest. Returns no results when there are none, including an unknown user. Notifications created at the same time may appear in any order.
 
-**_getUnreadNotifications**
+**\_getUnreadNotifications**
 
 ```text
 _getUnreadNotifications(user: User):
@@ -657,7 +655,7 @@ closeConversation(conversation: Conversation)
 
 ### Queries
 
-**_getConversations**
+**\_getConversations**
 
 ```text
 _getConversations(user: User):
@@ -666,7 +664,7 @@ _getConversations(user: User):
 
 Returns all conversations in which the user is a participant, including closed conversations so they can return to their previous messages. Open and closed conversations are shown separately by the app. Returns no results when there are none, including an unknown user. Their order is unspecified.
 
-**_getMessages**
+**\_getMessages**
 
 ```text
 _getMessages(
@@ -691,18 +689,18 @@ The five concepts do not call each other or check each other's state. The app ac
 
 Only the requests listed below are available to users. Recommendation refreshes, feed-status updates, notification creation, and conversation creation and closing happen only through reactions. A request that does not meet its conditions does not cause the concept action to happen. The app finishes the resulting reactions before handling another request involving the same users or conversation.
 
-| Request | Conditions and resulting action |
-|---|---|
-| Create a profile | `Requesting.createProfile(user, ...)` triggers `ProfileSetting.createProfile` through a reaction for the signed-in user with the supplied fields. The action's validation still applies. |
-| Edit, publish, or hide a profile | `Requesting.updateProfile`, `setStartupPitch`, `publishProfile`, and `hideProfile` act only on the signed-in user's profile. Each triggers the corresponding ProfileSetting action when its preconditions hold. |
-| Set preferences | `Requesting.setPreferences(user, ...)` requires that the signed-in user has a profile, then triggers `Recommending.setPreferences` for that user. Preferences belong only to that user. |
-| Show Interest | `Requesting.showInterest(user, other)` follows the guarded reaction below. |
-| Pass | `Requesting.pass(user, other)` requires an existing recommendation from user to other, or an incoming INTERESTED decision from other to user. It triggers `MutualMatching.pass` only if its preconditions hold. A hidden profile does not prevent dismissing an existing interest. |
-| See Later | `Requesting.seeLater(user, other)` requires an eligible AVAILABLE recommendation for the signed-in viewer, then triggers `Recommending.seeLater`. |
-| Begin browsing | `Requesting.startNewSession(user)` requires a visible profile and the beginning of a new browsing session, then triggers `Recommending.startNewSession` for that user. |
-| Unmatch | `Requesting.unmatch(user, other)` requires an active match involving the signed-in user, then triggers `MutualMatching.unmatch`. |
-| Send a message | `Requesting.sendMessage(user, conversation, content)` follows the guarded reaction below. |
-| Read or dismiss a notification | `Requesting.markAsRead` and `dismissNotification` require that the notification belongs to the signed-in user, then trigger the corresponding Notifying action when its preconditions hold. |
+| Request                          | Conditions and resulting action                                                                                                                                                                                                                                                    |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Create a profile                 | `Requesting.createProfile(user, ...)` triggers `ProfileSetting.createProfile` through a reaction for the signed-in user with the supplied fields. The action's validation still applies.                                                                                           |
+| Edit, publish, or hide a profile | `Requesting.updateProfile`, `setStartupPitch`, `publishProfile`, and `hideProfile` act only on the signed-in user's profile. Each triggers the corresponding ProfileSetting action when its preconditions hold.                                                                    |
+| Set preferences                  | `Requesting.setPreferences(user, ...)` requires that the signed-in user has a profile, then triggers `Recommending.setPreferences` for that user. Preferences belong only to that user.                                                                                            |
+| Show Interest                    | `Requesting.showInterest(user, other)` follows the guarded reaction below.                                                                                                                                                                                                         |
+| Pass                             | `Requesting.pass(user, other)` requires an existing recommendation from user to other, or an incoming INTERESTED decision from other to user. It triggers `MutualMatching.pass` only if its preconditions hold. A hidden profile does not prevent dismissing an existing interest. |
+| See Later                        | `Requesting.seeLater(user, other)` requires an eligible AVAILABLE recommendation for the signed-in viewer, then triggers `Recommending.seeLater`.                                                                                                                                  |
+| Begin browsing                   | `Requesting.startNewSession(user)` requires a visible profile and the beginning of a new browsing session, then triggers `Recommending.startNewSession` for that user.                                                                                                             |
+| Unmatch                          | `Requesting.unmatch(user, other)` requires an active match involving the signed-in user, then triggers `MutualMatching.unmatch`.                                                                                                                                                   |
+| Send a message                   | `Requesting.sendMessage(user, conversation, content)` follows the guarded reaction below.                                                                                                                                                                                          |
+| Read or dismiss a notification   | `Requesting.markAsRead` and `dismissNotification` require that the notification belongs to the signed-in user, then trigger the corresponding Notifying action when its preconditions hold.                                                                                        |
 
 ```text
 when Requesting.showInterest(user, other)
@@ -747,7 +745,7 @@ when ProfileSetting.publishProfile(user)
 where ProfileSetting:
   user and candidate have visible profiles with opposite roles
   userData and candidateData contain their skills, interests,
-    university, latitude, longitude, and availabilityHours
+    university, latitude, and longitude
 
 then
   Recommending.refreshRecommendation(
@@ -773,7 +771,7 @@ when Recommending.setPreferences(user, ...)
 where ProfileSetting:
   user and candidate have visible profiles with opposite roles
   userData and candidateData contain their skills, interests,
-    university, latitude, longitude, and availabilityHours
+    university, latitude, and longitude
 
 then
   Recommending.refreshRecommendation(
@@ -977,11 +975,12 @@ then
 This applies to each existing direction, keeping the feed decisions consistent with the passes recorded by MutualMatching.
 
 ---
+
 # Example User Journey
 
 **1. ProfileSetting**
 
-Keti registers as a builder at MIT. She adds her software engineering skills, her interest in traveling and exploring new places, and her availability of 10 hours per week. She indicates that she is looking to join an early-stage startup related to travel.
+Keti registers as a builder at MIT. She adds her software engineering skills and her interest in traveling and exploring new places. She indicates that she is looking to join an early-stage startup related to travel.
 
 Bumba registers as a founder at BU. He is building an app that helps solo travelers meet other travelers, find activities to do together, and explore new cities. He is looking for a technical co-founder to help develop the app.
 
