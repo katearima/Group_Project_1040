@@ -7,9 +7,50 @@ Sprint 2: 11/17 - 11/23. Alpha prototype.\
 Sprint 3: 11/24 - 11/30. Beta prototype.\
 Sprint 4: 12/01 - 12/07. MVP and user testing.
 
+| Stage                          | Deadline        | What we expect to deliver                                                                                                                                                                                                                                                                                      | Main responsibilities                                                                                                                                                                                                                                      |
+| :----------------------------- | :-------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Sprint 1: Concept design**   | **Mon, Nov 16** | Updated concept specifications and reactions, problem framing and ethical analysis, user journey, visual design study, design summary, and this development plan.                                                                                                                                              | Silk owns ProfileSetting, MutualMatching, and the user journey. Keti owns Recommending and the design summary. Raleigh owns Notifying and Chatting. Fidan owns this development plan. Problem framing, visual design, and reactions are reviewed together. |
+| **Sprint 2: Alpha checkpoint** | **Mon, Nov 23** | A first running version that we can open and demonstrate. Two users can sign in, create and publish founder/builder profiles, save preferences, see ranked recommendations, show interest or pass, become a match, and exchange basic messages. Profiles, decisions, and messages stay saved after refreshing. | Fidan finishes profiles and matching. Keti finishes preferences and recommendations. Raleigh connects basic chatting. Silk coordinates the screens and tracks what is ready. Sign-in, deployment, and reactions are shared integration work.               |
+| **Sprint 3: Beta checkpoint**  | **Mon, Nov 30** | A near-complete app with all five concepts connected. Add in-app notifications, See Later, profile hiding and republishing, preference updates, unmatching, and access to previous messages after a chat closes. Finish loading, empty, and error states and fix the main usability problems from alpha.       | Fidan finishes profile visibility and unmatching. Keti finishes recommendation updates and See Later. Raleigh completes notifications and closed-chat history. Silk checks the interface and updates the plan. Everyone checks the full flow.              |
+| **Sprint 4: User testing**     | **Mon, Dec 7**  | Complete testing with students who could use the app as founders or builders. Aim for 4–6 participants across at least two universities. Record where people get stuck, whether recommendations make sense to them, and what we changed after testing. Fix the most important issues.                          | Everyone helps run sessions. Fidan checks profiles and matching, Keti checks recommendations, Raleigh checks notifications and chatting, and Silk collects interface issues and tracks follow-up tasks.                                                    |
+
+Our goal is to have a working version of the app by the alpha checkpoint, then use the time before beta to finish the remaining features and fix problems. We want to connect the different parts early so we have time to see what works together and what still needs to change.
+
 ## Sprint Management
 
 Individual sprints will be managed via [the following backlog](https://docs.google.com/spreadsheets/d/1XkOPBRA-6CLnmeJ0T4gd80OykMGjANjbTzZeELhs754/edit?usp=sharing). Backlog entries consist of features, and the tasklist for each week further granularizes each feature's implementation timeline. Among other things, each entry is assigned a priority and the person in charge.
+
+### Division of Labor
+
+As of sprint 1, rough divisions of labor are as follows, subject to change:
+
+**Fidan — ProfileSetting, MutualMatching**
+
+- Build ProfileSetting, including creating, editing, publishing, and hiding profiles, and checking the required information.
+- Build MutualMatching, including Show Interest, Pass, incoming interest, and unmatching. Work with Keti and Raleigh on the reactions that update the feed, create chats, and send notifications.
+
+**Keti — Recommending**
+
+- Build Recommending, including preferences, the five-factor score, See Later, and updates when profiles or preferences change.
+- Work with Fidan to include preference settings in setup and keep recommendations consistent with matching decisions. Check that each user gets their own feed and that passed profiles stay passed.
+
+**Raleigh — Notifying, Chatting**
+
+- Build Notifying, including unread, read, and dismissed notifications for interest, matches, and messages.
+- Build Chatting, including saved messages, conversation history, and closed conversations after unmatching.
+- Work with Fidan on the match-to-chat flow and check that only participants can read messages, only active matches can send them, and dismissing a notification does not change the event behind it.
+
+**Silk — Scrum Manager, UI & Endpoints, Review**
+
+- Own the product backlog and keep the stages, responsibilities, risks, and fallback options up to date.
+- Coordinate the discovery, profile, Interested in You, Matches, and chat screens with the concept owners and coordinate endpoints as necessary.
+- Help bring the typography, colors, and layout together, and track usability fixes and demo preparation as we approach each checkpoint.
+
+**Shared work**
+
+- Review the problem framing and visual design study together.
+- Set up sign-in, deployment, and the application request boundary together.
+- Review reactions together, with the owners of the concepts they connect. Everyone helps find testing participants, run sessions, and prepare the final report.
 
 ## Implementation Risks
 
