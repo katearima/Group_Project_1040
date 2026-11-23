@@ -1,0 +1,50 @@
+{
+  "readableAreas": [
+    {
+      "area": "work-unit",
+      "path": "brief.md"
+    },
+    {
+      "area": "design",
+      "path": "compositions/Accounts.md"
+    },
+    {
+      "area": "design",
+      "path": "compositions/Matching.md"
+    },
+    {
+      "area": "design",
+      "path": "compositions/Notifications.md"
+    }
+  ],
+  "writableAreas": [
+    {
+      "area": "assigned-design",
+      "path": "compositions/Profiles.md"
+    },
+    {
+      "area": "assigned-design",
+      "path": "compositions/Recommendations.md"
+    },
+    {
+      "area": "assigned-design",
+      "path": "concepts/ProfileSetting.md"
+    },
+    {
+      "area": "assigned-design",
+      "path": "concepts/Recommending.md"
+    },
+    {
+      "area": "assigned-design",
+      "path": "types.md"
+    }
+  ],
+  "toolKinds": [
+    "repository-read",
+    "repository-write"
+  ],
+  "projectShell": "project-validation",
+  "network": false,
+  "generatedOutput": false,
+  "longRunningProcesses": false
+}

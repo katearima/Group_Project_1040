@@ -1,0 +1,4 @@
+- src/compositions/Matching.ts (style reference)
+- src/concepts.ts, src/composition.ts, src/assembly.ts, generated.config.ts (edit)
+- src/compositions/Profiles.ts, src/compositions/Recommendations.ts (new)
+- src/recommendations.integration.test.ts (new); src/integration.test.ts (helper reference)

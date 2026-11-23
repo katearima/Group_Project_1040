@@ -1,0 +1,40 @@
+{
+  "readableAreas": [
+    {
+      "area": "work-unit",
+      "path": "brief.md"
+    },
+    {
+      "area": "design",
+      "path": "compositions/Matching.md"
+    },
+    {
+      "area": "design",
+      "path": "compositions/Profiles.md"
+    },
+    {
+      "area": "design",
+      "path": "compositions/Recommendations.md"
+    },
+    {
+      "area": "design",
+      "path": "concepts/ProfileSetting.md"
+    },
+    {
+      "area": "design",
+      "path": "concepts/Recommending.md"
+    },
+    {
+      "area": "design",
+      "path": "types.md"
+    }
+  ],
+  "writableAreas": [],
+  "toolKinds": [
+    "repository-read"
+  ],
+  "projectShell": "none",
+  "network": false,
+  "generatedOutput": false,
+  "longRunningProcesses": false
+}

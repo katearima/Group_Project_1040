@@ -1,0 +1,50 @@
+{
+  "readableAreas": [
+    {
+      "area": "application",
+      "path": "design/concepts/ProfileSetting.md"
+    },
+    {
+      "area": "application",
+      "path": "design/concepts/Recommending.md"
+    },
+    {
+      "area": "application",
+      "path": "src/concepts/MutualMatching.test.ts"
+    },
+    {
+      "area": "application",
+      "path": "src/concepts/MutualMatching.ts"
+    },
+    {
+      "area": "application",
+      "path": "tsconfig.json"
+    }
+  ],
+  "writableAreas": [
+    {
+      "area": "owned-concept",
+      "path": "src/concepts/ProfileSetting.ts"
+    },
+    {
+      "area": "owned-concept",
+      "path": "src/concepts/Recommending.ts"
+    },
+    {
+      "area": "owned-test",
+      "path": "src/concepts/ProfileSetting.test.ts"
+    },
+    {
+      "area": "owned-test",
+      "path": "src/concepts/Recommending.test.ts"
+    }
+  ],
+  "toolKinds": [
+    "repository-read",
+    "repository-write"
+  ],
+  "projectShell": "project-local",
+  "network": false,
+  "generatedOutput": false,
+  "longRunningProcesses": false
+}

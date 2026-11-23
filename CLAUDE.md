@@ -34,24 +34,37 @@ which do not exist yet.
 - `generated/`: produced by `bun run generate`; never edit by hand.
 - `.sync-engine/work/<slug>/`: sync-engine skill work items (brief, prompts, run records).
 
-## Status (as of 2026-11-22)
+## Status (as of 2026-11-23)
 
-Implemented: MutualMatching, Notifying, Authenticating, Sessioning. Endpoints:
+Implemented: MutualMatching, Notifying, Authenticating, Sessioning, ProfileSetting,
+Recommending. Endpoints:
 
 - `/accounts/register`, `/accounts/sign-in`, `/accounts/sign-out`
 - `/matching/show-interest`, `/matching/pass`, `/matching/unmatch`,
   `/matching/interested-in-you`, `/matching/matches`
 - `/notifications/list`, `/notifications/unread`, `/notifications/mark-read`,
   `/notifications/dismiss`
+- `/profiles/create`, `/profiles/update`, `/profiles/set-pitch`, `/profiles/publish`,
+  `/profiles/mine`
+- `/recommendations/set-preferences`, `/recommendations/preferences`, `/recommendations/feed`
+
+Reactions 1 and 2 (create/update recommendations) are internal reactions in the
+`Refreshing` groups of `src/compositions/Profiles.ts` and `Recommendations.ts`; triggering
+endpoints answer after the flow settles (`.afterFlowSettles()`), because an endpoint-owned
+fan-out never answers when the candidate read is empty. Profiles carry an
+`availability` (hours/week) field the prose design omits. Work item:
+`.sync-engine/work/recommending/`.
 
 All endpoints take POST JSON. Every endpoint except register and sign-in takes `session`;
 the acting user always comes from the session, never from the request body.
 
 Not yet implemented (deliberately documented as deferred in `design/compositions/Matching.md`):
 
-- ProfileSetting, Recommending, Chatting concepts.
+- Chatting concept.
 - The ProfileSetting guard on show interest (visible profiles, opposite roles), which will
   also stop interest in nonexistent accounts, and the sender's name in interest notifications.
+- `/profiles/hide` and Reaction 3; viewing other people's profiles; See Later and Begin
+  Browsing endpoints.
 - Reactions 4, 5 (Recommending), 7, 9 (Chatting) and both halves of 10.
 - Persistence: all state is in memory and is lost on restart. `src/db.ts` (MongoDB) is not
   wired in.
@@ -80,6 +93,10 @@ Not yet implemented (deliberately documented as deferred in `design/compositions
 - **Interest and match notifications are best-effort**: if a notify fails after
   `showInterest` succeeds, the decision or match stays and nothing recreates the
   notification. The Interested in You and Matches lists are the source of truth.
+- **Composition binding bags:** every property read on a reaction/endpoint bag declares a
+  fresh logic variable, so read each name once (destructure, or use `take` in
+  `src/compositions/Profiles.ts`); reading the same name twice fails assembly with
+  "opened and never used". Optional query-row fields need `whether(...)` to match when absent.
 - Whitespace-only text counts as empty (team convention); usernames are the account
   identity, so they appear in links (`/profile/<user>`) and lists.
 - The host allows 120 requests per minute per client address (429 after that) and caps
