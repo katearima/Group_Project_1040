@@ -12,6 +12,8 @@ export default {
       new URL("./design/compositions/Accounts.md", import.meta.url),
       new URL("./design/compositions/Matching.md", import.meta.url),
       new URL("./design/compositions/Notifications.md", import.meta.url),
+      new URL("./design/compositions/Profiles.md", import.meta.url),
+      new URL("./design/compositions/Recommendations.md", import.meta.url),
     ],
   },
   projections: [httpWire({ policy: appHttpPolicy, name: "AppWireHttp" })],

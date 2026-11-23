@@ -1,0 +1,192 @@
+{
+  "state": "finalized",
+  "work": {
+    "slug": "recommending",
+    "path": "/Users/fidan10/Group_Project_1040/.sync-engine/work/recommending"
+  },
+  "role": "designer",
+  "phase": "contracts",
+  "execution": "simulated",
+  "independent": false,
+  "harness": "coordinator",
+  "simulationReason": "Mixed execution: coordinator authors contracts; independent critic reviews them",
+  "timeoutSeconds": 1800,
+  "prompt": {
+    "path": "/Users/fidan10/Group_Project_1040/.sync-engine/work/recommending/2026-11-23T06-05-19Z-designer-contracts.prompt.md",
+    "sha256": "f2f4426928e9bd34a7bbe75ce78c7cce797fb4f2a15afd2c2344846f4727fbdf"
+  },
+  "capabilities": {
+    "path": "/Users/fidan10/Group_Project_1040/.sync-engine/work/recommending/2026-11-23T06-05-19Z-designer-contracts.capabilities.json",
+    "sha256": "3e879b6936fd5d2464ef31c890323af19b9b442bc51ac65d22668a62e0f294c7"
+  },
+  "grant": {
+    "readableAreas": [
+      {
+        "area": "work-unit",
+        "path": "brief.md"
+      },
+      {
+        "area": "design",
+        "path": "compositions/Accounts.md"
+      },
+      {
+        "area": "design",
+        "path": "compositions/Matching.md"
+      },
+      {
+        "area": "design",
+        "path": "compositions/Notifications.md"
+      }
+    ],
+    "writableAreas": [
+      {
+        "area": "assigned-design",
+        "path": "compositions/Profiles.md"
+      },
+      {
+        "area": "assigned-design",
+        "path": "compositions/Recommendations.md"
+      },
+      {
+        "area": "assigned-design",
+        "path": "concepts/ProfileSetting.md"
+      },
+      {
+        "area": "assigned-design",
+        "path": "concepts/Recommending.md"
+      },
+      {
+        "area": "assigned-design",
+        "path": "types.md"
+      }
+    ],
+    "toolKinds": [
+      "repository-read",
+      "repository-write"
+    ],
+    "projectShell": "project-validation",
+    "network": false,
+    "generatedOutput": false,
+    "longRunningProcesses": false
+  },
+  "response": {
+    "path": "/Users/fidan10/Group_Project_1040/.sync-engine/work/recommending/2026-11-23T06-05-19Z-designer-contracts.response.md",
+    "sha256": "c908ae10a610ec2de3c7a4303fb0671a5d19545964a7d095b2e586e373408714",
+    "bytes": 1297
+  },
+  "retainedSources": [
+    {
+      "inputId": "brief",
+      "displayName": ".sync-engine/work/recommending/brief.md",
+      "sha256": "98806ee0a1f316e30c17672b279cce357c3a621a7846a81ce5015901fd0f272b"
+    },
+    {
+      "inputId": "context",
+      "displayName": ".sync-engine/work/recommending/inputs/concept-design-excerpt.md",
+      "sha256": "35a219da21a4f60b5bfaf04e49f99de3347e3bb0f6484e2061682098074e7af4"
+    }
+  ],
+  "policy": {
+    "review": "required",
+    "execution": "mixed"
+  },
+  "workspace": {
+    "root": "/Users/fidan10/Group_Project_1040",
+    "baseline": {
+      "path": "/Users/fidan10/Group_Project_1040/.sync-engine/work/recommending/2026-11-23T06-05-19Z-designer-contracts.baseline.json",
+      "sha256": "d2a7c32b0b8b8af49429e0044bd3da87708be3460b086112bcd7600de7cd6644"
+    }
+  },
+  "design": {
+    "root": "/Users/fidan10/Group_Project_1040/design",
+    "before": "1088e3305c7e6eea5d9ad74667f342c0727d6114db7350690919c8ad05f3f13e",
+    "beforeFiles": [
+      {
+        "path": "compositions/Accounts.md",
+        "sha256": "378e4d59108e9dc0c8abd90bd66d319dabf6793f67ec68e99dbd8fad6dde10ac"
+      },
+      {
+        "path": "compositions/Matching.md",
+        "sha256": "2bf5345e0689b9c38a45051304b3c3dcdd4d7175341205217556d9a5b1ae7f2b"
+      },
+      {
+        "path": "compositions/Notifications.md",
+        "sha256": "6852dcf24e788652c125eabbb3b44bc8837a623d72ac7cd1540c30d7d0db85cd"
+      },
+      {
+        "path": "concepts/Authenticating.md",
+        "sha256": "4968d076f5ada10cd5f4e6db73272c39907e1fe65acfcc8ed06d0c1f3c37f549"
+      },
+      {
+        "path": "concepts/MutualMatching.md",
+        "sha256": "4867bc78301716a3afb4410bc07a29516b011eb5ebed3396ff11ae3af9278be5"
+      },
+      {
+        "path": "concepts/Notifying.md",
+        "sha256": "fc6d26fb93cebb1a55c65593b2f4c4cfa5242304ac3a1005da65f843049643a5"
+      },
+      {
+        "path": "concepts/Sessioning.md",
+        "sha256": "849df9695303d50b13f390026b4504bd8873740d7b083760d2687a8d723b0021"
+      },
+      {
+        "path": "types.md",
+        "sha256": "86dfcd23731a0f44f203e5e91fb36e475be7c5f49f80f5950be5a629ffa1f249"
+      }
+    ],
+    "after": "7ee93b7dabc76f5c88d517bad5bcd04acadf780662630ff74f53f2a77f0085f3",
+    "afterFiles": [
+      {
+        "path": "compositions/Accounts.md",
+        "sha256": "378e4d59108e9dc0c8abd90bd66d319dabf6793f67ec68e99dbd8fad6dde10ac"
+      },
+      {
+        "path": "compositions/Matching.md",
+        "sha256": "2bf5345e0689b9c38a45051304b3c3dcdd4d7175341205217556d9a5b1ae7f2b"
+      },
+      {
+        "path": "compositions/Notifications.md",
+        "sha256": "6852dcf24e788652c125eabbb3b44bc8837a623d72ac7cd1540c30d7d0db85cd"
+      },
+      {
+        "path": "compositions/Profiles.md",
+        "sha256": "2ec4eeb5638bedb37e37a53fc8008754e59220bafb0545115e96dc4a5e5041d0"
+      },
+      {
+        "path": "compositions/Recommendations.md",
+        "sha256": "3be373b8e81f2c131a586e50ae570f633cc9bf83db68194aa92833d446e71e28"
+      },
+      {
+        "path": "concepts/Authenticating.md",
+        "sha256": "4968d076f5ada10cd5f4e6db73272c39907e1fe65acfcc8ed06d0c1f3c37f549"
+      },
+      {
+        "path": "concepts/MutualMatching.md",
+        "sha256": "4867bc78301716a3afb4410bc07a29516b011eb5ebed3396ff11ae3af9278be5"
+      },
+      {
+        "path": "concepts/Notifying.md",
+        "sha256": "fc6d26fb93cebb1a55c65593b2f4c4cfa5242304ac3a1005da65f843049643a5"
+      },
+      {
+        "path": "concepts/ProfileSetting.md",
+        "sha256": "ae2e03b8a5a16ebc1cc694800bff26f613dfd3e85322ed90404e618010f562a1"
+      },
+      {
+        "path": "concepts/Recommending.md",
+        "sha256": "3fbe33282fb645675eea1c061a4a0e028b9d5583d1fbbb149bceac929af0d4f8"
+      },
+      {
+        "path": "concepts/Sessioning.md",
+        "sha256": "849df9695303d50b13f390026b4504bd8873740d7b083760d2687a8d723b0021"
+      },
+      {
+        "path": "types.md",
+        "sha256": "22740aca79c7549c8ef2a0aa16f3ef9977908db9c4e275f1420e341fbfe93112"
+      }
+    ]
+  },
+  "status": "completed",
+  "result": "complete",
+  "enforcement": "prompt-guided"
+}
