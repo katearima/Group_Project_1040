@@ -213,7 +213,27 @@ export type AppWire = {
     output: {
       "pitchSet": true;
     };
-    error: { error: AppWideError | "EMPTY_PITCH" | "INVALID_INPUT" | "PITCH_NOT_FOUNDER" | "PITCH_PROFILE_NOT_FOUND" | "UNKNOWN_SESSION" };
+    error: { error: AppWideError | "EMPTY_PITCH" | "INVALID_INPUT" | "INVALID_RECOMMENDATION_DATA" | "PITCH_NOT_FOUNDER" | "PITCH_PROFILE_NOT_FOUND" | "SELF_RECOMMENDATION" | "UNKNOWN_SESSION" };
+  };
+  "/profiles/update": {
+    input: {
+      "availability": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["ProfileSetting"]["updateProfile"]>[0], ["availability"]>>;
+      "experience": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["ProfileSetting"]["updateProfile"]>[0], ["experience"]>>;
+      "graduationYear": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["ProfileSetting"]["updateProfile"]>[0], ["graduationYear"]>>;
+      "interests": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["ProfileSetting"]["updateProfile"]>[0], ["interests"]>>;
+      "latitude": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["ProfileSetting"]["updateProfile"]>[0], ["latitude"]>>;
+      "location": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["ProfileSetting"]["updateProfile"]>[0], ["location"]>>;
+      "longitude": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["ProfileSetting"]["updateProfile"]>[0], ["longitude"]>>;
+      "major": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["ProfileSetting"]["updateProfile"]>[0], ["major"]>>;
+      "name": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["ProfileSetting"]["updateProfile"]>[0], ["name"]>>;
+      "session"?: Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
+      "skills": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["ProfileSetting"]["updateProfile"]>[0], ["skills"]>>;
+      "university": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["ProfileSetting"]["updateProfile"]>[0], ["university"]>>;
+    };
+    output: {
+      "updated": true;
+    };
+    error: { error: AppWideError | "INVALID_INPUT" | "INVALID_PROFILE_UPDATE" | "INVALID_RECOMMENDATION_DATA" | "SELF_RECOMMENDATION" | "UNKNOWN_SESSION" | "UPDATE_PROFILE_NOT_FOUND" | "UPDATE_WOULD_UNPUBLISH" };
   };
   "/recommendations/feed": {
     input: {
@@ -226,6 +246,39 @@ export type AppWire = {
       }[];
     };
     error: { error: AppWideError | "INVALID_INPUT" | "UNKNOWN_SESSION" };
+  };
+  "/recommendations/preferences": {
+    input: {
+      "session"?: Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
+    };
+    output: {
+      "availability": null;
+      "distance": null;
+      "interests": never[];
+      "skills": never[];
+      "universities": never[];
+    } | {
+      "availability": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Recommending"]["_getPreferences"]>>>, ["availability"]>> | null;
+      "distance": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Recommending"]["_getPreferences"]>>>, ["distance"]>> | null;
+      "interests": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Recommending"]["_getPreferences"]>>>, ["interests"]>>;
+      "skills": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Recommending"]["_getPreferences"]>>>, ["skills"]>>;
+      "universities": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Recommending"]["_getPreferences"]>>>, ["universities"]>>;
+    };
+    error: { error: AppWideError | "INVALID_INPUT" | "UNKNOWN_SESSION" };
+  };
+  "/recommendations/set-preferences": {
+    input: {
+      "availability"?: Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Recommending"]["setPreferences"]>[0], ["availability"]>, AtPath<Parameters<(typeof ApplicationConceptSet.computations)["numberSupplied"]["fn"]>[0], ["value"]>]>>;
+      "distance"?: Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.computations)["numberSupplied"]["fn"]>[0], ["value"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Recommending"]["setPreferences"]>[0], ["distance"]>]>>;
+      "interests": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Recommending"]["setPreferences"]>[0], ["interests"]>>;
+      "session"?: Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
+      "skills": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Recommending"]["setPreferences"]>[0], ["skills"]>>;
+      "universities": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Recommending"]["setPreferences"]>[0], ["universities"]>>;
+    };
+    output: {
+      "saved": true;
+    };
+    error: { error: AppWideError | "INVALID_INPUT" | "INVALID_PREFERENCES" | "INVALID_RECOMMENDATION_DATA" | "PREFERENCES_NEED_PROFILE" | "SELF_RECOMMENDATION" | "UNKNOWN_SESSION" };
   };
 };
 
@@ -433,6 +486,26 @@ export type AppWireHttp = {
     };
     error: { error: HttpAppWideError | "FORBIDDEN" | "INVALID_REQUEST" | "NOT_FOUND" | "UNAUTHORIZED" };
   };
+  "/profiles/update": {
+    input: {
+      "availability": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["ProfileSetting"]["updateProfile"]>[0], ["availability"]>>;
+      "experience": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["ProfileSetting"]["updateProfile"]>[0], ["experience"]>>;
+      "graduationYear": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["ProfileSetting"]["updateProfile"]>[0], ["graduationYear"]>>;
+      "interests": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["ProfileSetting"]["updateProfile"]>[0], ["interests"]>>;
+      "latitude": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["ProfileSetting"]["updateProfile"]>[0], ["latitude"]>>;
+      "location": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["ProfileSetting"]["updateProfile"]>[0], ["location"]>>;
+      "longitude": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["ProfileSetting"]["updateProfile"]>[0], ["longitude"]>>;
+      "major": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["ProfileSetting"]["updateProfile"]>[0], ["major"]>>;
+      "name": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["ProfileSetting"]["updateProfile"]>[0], ["name"]>>;
+      "session"?: Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
+      "skills": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["ProfileSetting"]["updateProfile"]>[0], ["skills"]>>;
+      "university": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["ProfileSetting"]["updateProfile"]>[0], ["university"]>>;
+    };
+    output: {
+      "updated": true;
+    };
+    error: { error: HttpAppWideError | "CONFLICT" | "INVALID_REQUEST" | "NOT_FOUND" | "UNAUTHORIZED" };
+  };
   "/recommendations/feed": {
     input: {
       "session"?: Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
@@ -444,5 +517,38 @@ export type AppWireHttp = {
       }[];
     };
     error: { error: HttpAppWideError | "INVALID_REQUEST" | "UNAUTHORIZED" };
+  };
+  "/recommendations/preferences": {
+    input: {
+      "session"?: Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
+    };
+    output: {
+      "availability": null;
+      "distance": null;
+      "interests": never[];
+      "skills": never[];
+      "universities": never[];
+    } | {
+      "availability": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Recommending"]["_getPreferences"]>>>, ["availability"]>> | null;
+      "distance": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Recommending"]["_getPreferences"]>>>, ["distance"]>> | null;
+      "interests": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Recommending"]["_getPreferences"]>>>, ["interests"]>>;
+      "skills": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Recommending"]["_getPreferences"]>>>, ["skills"]>>;
+      "universities": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Recommending"]["_getPreferences"]>>>, ["universities"]>>;
+    };
+    error: { error: HttpAppWideError | "INVALID_REQUEST" | "UNAUTHORIZED" };
+  };
+  "/recommendations/set-preferences": {
+    input: {
+      "availability"?: Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Recommending"]["setPreferences"]>[0], ["availability"]>, AtPath<Parameters<(typeof ApplicationConceptSet.computations)["numberSupplied"]["fn"]>[0], ["value"]>]>>;
+      "distance"?: Jsonify<OneOf<[AtPath<Parameters<(typeof ApplicationConceptSet.computations)["numberSupplied"]["fn"]>[0], ["value"]>, AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Recommending"]["setPreferences"]>[0], ["distance"]>]>>;
+      "interests": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Recommending"]["setPreferences"]>[0], ["interests"]>>;
+      "session"?: Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
+      "skills": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Recommending"]["setPreferences"]>[0], ["skills"]>>;
+      "universities": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Recommending"]["setPreferences"]>[0], ["universities"]>>;
+    };
+    output: {
+      "saved": true;
+    };
+    error: { error: HttpAppWideError | "INVALID_REQUEST" | "NOT_FOUND" | "UNAUTHORIZED" };
   };
 };

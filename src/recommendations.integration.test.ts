@@ -2,7 +2,8 @@ import { beforeEach, describe, expect, test } from "bun:test";
 import { createApplicationHttpHandler } from "./main.ts";
 
 /**
- * Black-box tests for profiles and the recommendation feed (Reaction 1), driven through the @mit-sdg/sync-engine-http handler on a fresh in-memory app.
+ * Black-box tests for profiles, preferences, and the recommendation feed (Reactions 1 and
+ * 2), driven through the @mit-sdg/sync-engine-http handler on a fresh in-memory app.
  */
 
 type Handler = ReturnType<typeof createApplicationHttpHandler>;
@@ -130,10 +131,29 @@ describe("profiles", () => {
     expect(mine.startupPitch).toBe("Travel app");
   });
 
+  test("a visible profile cannot be updated into an incomplete one", async () => {
+    const keti = await register("keti");
+    await ok("/profiles/create", { session: keti, role: "BUILDER", ...profile() });
+    await ok("/profiles/publish", { session: keti });
+    await refused(
+      "/profiles/update",
+      { session: keti, ...profile({ interests: [] }) },
+      409,
+      "CONFLICT",
+    );
+    expect((await ok("/profiles/mine", { session: keti })).interests).toEqual(["data tools"]);
+  });
+
   test("missing and invalid sessions are refused without changes", async () => {
     await refused("/profiles/create", { role: "BUILDER", ...profile() }, 401, "UNAUTHORIZED");
     await refused("/profiles/publish", { session: "invented" }, 401, "UNAUTHORIZED");
     await refused("/recommendations/feed", {}, 401, "UNAUTHORIZED");
+    await refused(
+      "/recommendations/set-preferences",
+      { session: "invented", skills: [], interests: [], universities: [] },
+      401,
+      "UNAUTHORIZED",
+    );
   });
 });
 
@@ -185,5 +205,158 @@ describe("Reaction 1: publishing creates recommendations", () => {
     await ok("/profiles/publish", { session: bumba });
     await ok("/profiles/publish", { session: keti });
     expect(await feedOf(keti)).toEqual([{ user: "bumba", score: 1 }]);
+  });
+});
+
+describe("Reaction 2: changes recalculate recommendations", () => {
+  test("Keti's preferences change her score for Bumba", async () => {
+    const { keti, bumba } = await ketiAndBumba();
+    await ok("/profiles/publish", { session: keti });
+    await ok("/profiles/publish", { session: bumba });
+    expect(
+      await ok("/recommendations/set-preferences", {
+        session: keti,
+        skills: [],
+        interests: ["data tools", "travel"],
+        universities: ["MIT"],
+      }),
+    ).toEqual({ saved: true });
+    // interests 0.5 (one of two), university 0 (BU) → (1 + 0.5 + 0 + 1 + 1) / 5 = 0.7.
+    expect(await feedOf(keti)).toEqual([{ user: "bumba", score: 0.7 }]);
+    expect(await feedOf(bumba)).toEqual([{ user: "keti", score: 1 }]);
+  });
+
+  test("Bumba's skill preference and Keti's skills move both directions", async () => {
+    const { keti, bumba } = await ketiAndBumba();
+    await ok("/profiles/publish", { session: keti });
+    await ok("/profiles/publish", { session: bumba });
+    await ok("/recommendations/set-preferences", {
+      session: bumba,
+      skills: ["software engineering", "design"],
+      interests: [],
+      universities: [],
+    });
+    // Bumba→Keti: Bumba prefers 2 skills, Keti has 1 → 0.5; Keti prefers none → 1; skills 0.75.
+    // Keti→Bumba: Bumba prefers 2, Keti has 1 → 0.5; Keti's side 1; skills 0.75.
+    expect(await feedOf(bumba)).toEqual([{ user: "keti", score: 0.95 }]);
+    expect(await feedOf(keti)).toEqual([{ user: "bumba", score: 0.95 }]);
+    await ok("/profiles/update", {
+      session: keti,
+      ...profile({ skills: ["Software Engineering", "design"] }),
+    });
+    expect(await feedOf(bumba)).toEqual([{ user: "keti", score: 1 }]);
+    expect(await feedOf(keti)).toEqual([{ user: "bumba", score: 1 }]);
+  });
+
+  test("a pitch change refreshes without changing scores", async () => {
+    const { keti, bumba } = await ketiAndBumba();
+    await ok("/profiles/publish", { session: keti });
+    await ok("/profiles/publish", { session: bumba });
+    expect(await ok("/profiles/set-pitch", { session: bumba, pitch: "New pitch" })).toEqual({
+      pitchSet: true,
+    });
+    expect(await feedOf(keti)).toEqual([{ user: "bumba", score: 1 }]);
+  });
+
+  test("changes while unpublished take effect only when published", async () => {
+    const { keti, bumba } = await ketiAndBumba();
+    await ok("/profiles/publish", { session: bumba });
+    await ok("/profiles/update", { session: keti, ...profile({ interests: ["music"] }) });
+    await ok("/recommendations/set-preferences", {
+      session: keti,
+      skills: [],
+      interests: [],
+      universities: ["BU"],
+    });
+    expect(await feedOf(keti)).toEqual([]);
+    expect(await feedOf(bumba)).toEqual([]);
+    await ok("/profiles/publish", { session: keti });
+    // Keti→Bumba: interests fall back to Keti's own ("music") → 0; university BU → 1.
+    expect(await feedOf(keti)).toEqual([{ user: "bumba", score: 0.8 }]);
+    // Bumba→Keti: Bumba's own interest "data tools" vs Keti's "music" → 0.
+    expect(await feedOf(bumba)).toEqual([{ user: "keti", score: 0.8 }]);
+  });
+});
+
+describe("preferences", () => {
+  test("defaults, saved values, and clearing omitted numbers", async () => {
+    const keti = await register("keti");
+    await ok("/profiles/create", { session: keti, role: "BUILDER", ...profile() });
+    const empty = { skills: [], interests: [], universities: [], distance: null, availability: null };
+    expect(await ok("/recommendations/preferences", { session: keti })).toEqual(empty);
+    await ok("/recommendations/set-preferences", {
+      session: keti,
+      skills: ["Go"],
+      interests: [],
+      universities: [],
+      distance: 25,
+      availability: 0,
+    });
+    expect(await ok("/recommendations/preferences", { session: keti })).toEqual({
+      ...empty,
+      skills: ["Go"],
+      distance: 25,
+      availability: 0,
+    });
+    await ok("/recommendations/set-preferences", {
+      session: keti,
+      skills: [],
+      interests: ["travel"],
+      universities: [],
+      availability: 5,
+    });
+    expect(await ok("/recommendations/preferences", { session: keti })).toEqual({
+      ...empty,
+      interests: ["travel"],
+      availability: 5,
+    });
+  });
+
+  test("refused without a profile and for invalid values, without changes", async () => {
+    const keti = await register("keti");
+    await refused(
+      "/recommendations/set-preferences",
+      { session: keti, skills: [], interests: [], universities: [] },
+      404,
+      "NOT_FOUND",
+    );
+    await ok("/profiles/create", { session: keti, role: "BUILDER", ...profile() });
+    await ok("/recommendations/set-preferences", {
+      session: keti,
+      skills: ["Go"],
+      interests: [],
+      universities: [],
+    });
+    await refused(
+      "/recommendations/set-preferences",
+      { session: keti, skills: [], interests: [], universities: [], distance: -1 },
+      400,
+      "INVALID_REQUEST",
+    );
+    await refused(
+      "/recommendations/set-preferences",
+      { session: keti, skills: ["  "], interests: [], universities: [] },
+      400,
+      "INVALID_REQUEST",
+    );
+    expect((await ok("/recommendations/preferences", { session: keti })).skills).toEqual(["Go"]);
+  });
+
+  test("a zero preferred distance keeps only same-place candidates at full proximity", async () => {
+    const { keti, bumba } = await ketiAndBumba();
+    await ok("/profiles/publish", { session: keti });
+    await ok("/profiles/update", {
+      session: bumba,
+      ...profile({ name: "Bumba B", university: "BU", skills: ["sales"], latitude: 42.35 }),
+    });
+    await ok("/profiles/publish", { session: bumba });
+    await ok("/recommendations/set-preferences", {
+      session: keti,
+      skills: [],
+      interests: [],
+      universities: [],
+      distance: 0,
+    });
+    expect(await feedOf(keti)).toEqual([{ user: "bumba", score: 0.8 }]);
   });
 });

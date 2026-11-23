@@ -180,6 +180,7 @@ Defined in [Sessioning](../design/concepts/Sessioning.md), line 1.
 
 - `currentInstant() : DateTime` — [Application types and instances](../design/types.md), line 35.
 - `matchesLink(user: Authenticating.Account) : String` — [Matching](../design/compositions/Matching.md), line 67.
+- `numberSupplied(value?: Number) : Flag` — [Recommendations](../design/compositions/Recommendations.md), line 47.
 - `profileLink(user: Authenticating.Account) : String` — [Matching](../design/compositions/Matching.md), line 65.
 - `sessionLifetime() : Number` — [Accounts](../design/compositions/Accounts.md), line 10.
 
@@ -859,8 +860,8 @@ then
 ### Profiles.Reads.Mine
 
 Authored path: `Profiles.Reads.Mine`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 90.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 96.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 108.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 114.
 
 ```reaction
 when RequestBoundary.request (path: "/profiles/mine", requestId, session)
@@ -873,8 +874,8 @@ then
 ### Profiles.Reads.Mine:has-profile#2
 
 Authored path: `Profiles.Reads.Mine`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 90.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 96.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 108.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 114.
 
 ```reaction
 when Sessioning.current (now: time, session, subject: user), asked by Profiles.Reads.Mine
@@ -889,8 +890,8 @@ then
 ### Profiles.Reads.Mine:no-profile#2
 
 Authored path: `Profiles.Reads.Mine`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 90.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 96.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 108.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 114.
 
 ```reaction
 when Sessioning.current (now: time, session, subject: user), asked by Profiles.Reads.Mine
@@ -901,10 +902,38 @@ then
   RequestBoundary.respond (error: "NO_PROFILE", requestId)
 ```
 
+### Profiles.Refreshing.RefreshOnPitch
+
+Authored path: `Profiles.Refreshing.RefreshOnPitch`.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 19.
+
+```reaction
+when ProfileSetting.setStartupPitch (user)
+where
+  ProfileSetting._recommendationData (user) has (availability: userAvailabilityForward, interests: userInterestsForward, latitude: userLatitudeForward, longitude: userLongitudeForward, skills: userSkillsForward, university: userUniversityForward, visible: true)
+  ProfileSetting._visibleCandidates (user) has (availability: candidateAvailabilityForward, candidate: candidateForward, interests: candidateInterestsForward, latitude: candidateLatitudeForward, longitude: candidateLongitudeForward, skills: candidateSkillsForward, university: candidateUniversityForward)
+then
+  Recommending.refreshRecommendation (candidate: candidateForward, candidateAvailability: candidateAvailabilityForward, candidateInterests: candidateInterestsForward, candidateLatitude: candidateLatitudeForward, candidateLongitude: candidateLongitudeForward, candidateSkills: candidateSkillsForward, candidateUniversity: candidateUniversityForward, viewer: user, viewerAvailability: userAvailabilityForward, viewerInterests: userInterestsForward, viewerLatitude: userLatitudeForward, viewerLongitude: userLongitudeForward, viewerSkills: userSkillsForward, viewerUniversity: userUniversityForward)
+```
+
+### Profiles.Refreshing.RefreshOnPitch#2
+
+Authored path: `Profiles.Refreshing.RefreshOnPitch`.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 19.
+
+```reaction
+when Recommending.refreshRecommendation (candidate: candidateForward, candidateAvailability: candidateAvailabilityForward, candidateInterests: candidateInterestsForward, candidateLatitude: candidateLatitudeForward, candidateLongitude: candidateLongitudeForward, candidateSkills: candidateSkillsForward, candidateUniversity: candidateUniversityForward, viewer: user, viewerAvailability: userAvailabilityForward, viewerInterests: userInterestsForward, viewerLatitude: userLatitudeForward, viewerLongitude: userLongitudeForward, viewerSkills: userSkillsForward, viewerUniversity: userUniversityForward), asked by Profiles.Refreshing.RefreshOnPitch
+where
+  ProfileSetting._recommendationData (user) has (availability: userAvailabilityBack, interests: userInterestsBack, latitude: userLatitudeBack, longitude: userLongitudeBack, skills: userSkillsBack, university: userUniversityBack, visible: true)
+  ProfileSetting._visibleCandidates (user) has (availability: candidateAvailabilityBack, candidate: candidateBack, interests: candidateInterestsBack, latitude: candidateLatitudeBack, longitude: candidateLongitudeBack, skills: candidateSkillsBack, university: candidateUniversityBack)
+then
+  Recommending.refreshRecommendation (candidate: user, candidateAvailability: userAvailabilityBack, candidateInterests: userInterestsBack, candidateLatitude: userLatitudeBack, candidateLongitude: userLongitudeBack, candidateSkills: userSkillsBack, candidateUniversity: userUniversityBack, viewer: candidateBack, viewerAvailability: candidateAvailabilityBack, viewerInterests: candidateInterestsBack, viewerLatitude: candidateLatitudeBack, viewerLongitude: candidateLongitudeBack, viewerSkills: candidateSkillsBack, viewerUniversity: candidateUniversityBack)
+```
+
 ### Profiles.Refreshing.RefreshOnPublish
 
 Authored path: `Profiles.Refreshing.RefreshOnPublish`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 16.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 17.
 
 ```reaction
 when ProfileSetting.publishProfile (user)
@@ -918,7 +947,7 @@ then
 ### Profiles.Refreshing.RefreshOnPublish#2
 
 Authored path: `Profiles.Refreshing.RefreshOnPublish`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 16.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 17.
 
 ```reaction
 when Recommending.refreshRecommendation (candidate: candidateForward, candidateAvailability: candidateAvailabilityForward, candidateInterests: candidateInterestsForward, candidateLatitude: candidateLatitudeForward, candidateLongitude: candidateLongitudeForward, candidateSkills: candidateSkillsForward, candidateUniversity: candidateUniversityForward, viewer: user, viewerAvailability: userAvailabilityForward, viewerInterests: userInterestsForward, viewerLatitude: userLatitudeForward, viewerLongitude: userLongitudeForward, viewerSkills: userSkillsForward, viewerUniversity: userUniversityForward), asked by Profiles.Refreshing.RefreshOnPublish
@@ -929,11 +958,39 @@ then
   Recommending.refreshRecommendation (candidate: user, candidateAvailability: userAvailabilityBack, candidateInterests: userInterestsBack, candidateLatitude: userLatitudeBack, candidateLongitude: userLongitudeBack, candidateSkills: userSkillsBack, candidateUniversity: userUniversityBack, viewer: candidateBack, viewerAvailability: candidateAvailabilityBack, viewerInterests: candidateInterestsBack, viewerLatitude: candidateLatitudeBack, viewerLongitude: candidateLongitudeBack, viewerSkills: candidateSkillsBack, viewerUniversity: candidateUniversityBack)
 ```
 
+### Profiles.Refreshing.RefreshOnUpdate
+
+Authored path: `Profiles.Refreshing.RefreshOnUpdate`.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 18.
+
+```reaction
+when ProfileSetting.updateProfile (user)
+where
+  ProfileSetting._recommendationData (user) has (availability: userAvailabilityForward, interests: userInterestsForward, latitude: userLatitudeForward, longitude: userLongitudeForward, skills: userSkillsForward, university: userUniversityForward, visible: true)
+  ProfileSetting._visibleCandidates (user) has (availability: candidateAvailabilityForward, candidate: candidateForward, interests: candidateInterestsForward, latitude: candidateLatitudeForward, longitude: candidateLongitudeForward, skills: candidateSkillsForward, university: candidateUniversityForward)
+then
+  Recommending.refreshRecommendation (candidate: candidateForward, candidateAvailability: candidateAvailabilityForward, candidateInterests: candidateInterestsForward, candidateLatitude: candidateLatitudeForward, candidateLongitude: candidateLongitudeForward, candidateSkills: candidateSkillsForward, candidateUniversity: candidateUniversityForward, viewer: user, viewerAvailability: userAvailabilityForward, viewerInterests: userInterestsForward, viewerLatitude: userLatitudeForward, viewerLongitude: userLongitudeForward, viewerSkills: userSkillsForward, viewerUniversity: userUniversityForward)
+```
+
+### Profiles.Refreshing.RefreshOnUpdate#2
+
+Authored path: `Profiles.Refreshing.RefreshOnUpdate`.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 18.
+
+```reaction
+when Recommending.refreshRecommendation (candidate: candidateForward, candidateAvailability: candidateAvailabilityForward, candidateInterests: candidateInterestsForward, candidateLatitude: candidateLatitudeForward, candidateLongitude: candidateLongitudeForward, candidateSkills: candidateSkillsForward, candidateUniversity: candidateUniversityForward, viewer: user, viewerAvailability: userAvailabilityForward, viewerInterests: userInterestsForward, viewerLatitude: userLatitudeForward, viewerLongitude: userLongitudeForward, viewerSkills: userSkillsForward, viewerUniversity: userUniversityForward), asked by Profiles.Refreshing.RefreshOnUpdate
+where
+  ProfileSetting._recommendationData (user) has (availability: userAvailabilityBack, interests: userInterestsBack, latitude: userLatitudeBack, longitude: userLongitudeBack, skills: userSkillsBack, university: userUniversityBack, visible: true)
+  ProfileSetting._visibleCandidates (user) has (availability: candidateAvailabilityBack, candidate: candidateBack, interests: candidateInterestsBack, latitude: candidateLatitudeBack, longitude: candidateLongitudeBack, skills: candidateSkillsBack, university: candidateUniversityBack)
+then
+  Recommending.refreshRecommendation (candidate: user, candidateAvailability: userAvailabilityBack, candidateInterests: userInterestsBack, candidateLatitude: userLatitudeBack, candidateLongitude: userLongitudeBack, candidateSkills: userSkillsBack, candidateUniversity: userUniversityBack, viewer: candidateBack, viewerAvailability: candidateAvailabilityBack, viewerInterests: candidateInterestsBack, viewerLatitude: candidateLatitudeBack, viewerLongitude: candidateLongitudeBack, viewerSkills: candidateSkillsBack, viewerUniversity: candidateUniversityBack)
+```
+
 ### Profiles.Requests.Create
 
 Authored path: `Profiles.Requests.Create`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 52.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 60.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 57.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 65.
 
 ```reaction
 when RequestBoundary.request (availability, experience, graduationYear, interests, latitude, location, longitude, major, name, path: "/profiles/create", requestId, role, session, skills, university)
@@ -946,8 +1003,8 @@ then
 ### Profiles.Requests.Create#2
 
 Authored path: `Profiles.Requests.Create`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 52.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 60.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 57.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 65.
 
 ```reaction
 when Sessioning.current (now: time, session, subject: user), asked by Profiles.Requests.Create
@@ -960,8 +1017,8 @@ then
 ### Profiles.Requests.Create#3
 
 Authored path: `Profiles.Requests.Create`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 52.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 60.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 57.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 65.
 
 ```reaction
 when ProfileSetting.createProfile (availability, experience, graduationYear, interests, latitude, location, longitude, major, name, role, skills, university, user, profile), asked by Profiles.Requests.Create#2
@@ -974,8 +1031,8 @@ then
 ### Profiles.Requests.Publish
 
 Authored path: `Profiles.Requests.Publish`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 77.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 85.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 95.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 103.
 
 ```reaction
 when RequestBoundary.request (path: "/profiles/publish", requestId, session)
@@ -988,8 +1045,8 @@ then
 ### Profiles.Requests.Publish#2
 
 Authored path: `Profiles.Requests.Publish`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 77.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 85.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 95.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 103.
 
 ```reaction
 when Sessioning.current (now: time, session, subject: user), asked by Profiles.Requests.Publish
@@ -1000,8 +1057,8 @@ then
 ### Profiles.Requests.Publish#3
 
 Authored path: `Profiles.Requests.Publish`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 77.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 85.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 95.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 103.
 
 ```reaction
 when ProfileSetting.publishProfile (user), asked by Profiles.Requests.Publish#2
@@ -1015,8 +1072,8 @@ then
 ### Profiles.Requests.SetPitch
 
 Authored path: `Profiles.Requests.SetPitch`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 65.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 72.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 83.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 90.
 
 ```reaction
 when RequestBoundary.request (path: "/profiles/set-pitch", pitch, requestId, session)
@@ -1029,8 +1086,8 @@ then
 ### Profiles.Requests.SetPitch#2
 
 Authored path: `Profiles.Requests.SetPitch`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 65.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 72.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 83.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 90.
 
 ```reaction
 when Sessioning.current (now: time, session, subject: user), asked by Profiles.Requests.SetPitch
@@ -1043,22 +1100,66 @@ then
 ### Profiles.Requests.SetPitch#3
 
 Authored path: `Profiles.Requests.SetPitch`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 65.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 72.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 83.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 90.
 
 ```reaction
 when ProfileSetting.setStartupPitch (pitch, user), asked by Profiles.Requests.SetPitch#2
+at the flow's settlement frontier
 where
   earlier, RequestBoundary.request (path: "/profiles/set-pitch", pitch, requestId, session)
 then
   RequestBoundary.respond (pitchSet: true, requestId)
 ```
 
+### Profiles.Requests.Update
+
+Authored path: `Profiles.Requests.Update`.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 70.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 78.
+
+```reaction
+when RequestBoundary.request (availability, experience, graduationYear, interests, latitude, location, longitude, major, name, path: "/profiles/update", requestId, session, skills, university)
+where
+  time is the current flow's instant
+then
+  Sessioning.current (now: time, session)
+```
+
+### Profiles.Requests.Update#2
+
+Authored path: `Profiles.Requests.Update`.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 70.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 78.
+
+```reaction
+when Sessioning.current (now: time, session, subject: user), asked by Profiles.Requests.Update
+where
+  earlier, RequestBoundary.request (availability, experience, graduationYear, interests, latitude, location, longitude, major, name, path: "/profiles/update", requestId, session, skills, university)
+then
+  ProfileSetting.updateProfile (availability, experience, graduationYear, interests, latitude, location, longitude, major, name, skills, university, user)
+```
+
+### Profiles.Requests.Update#3
+
+Authored path: `Profiles.Requests.Update`.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 70.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 78.
+
+```reaction
+when ProfileSetting.updateProfile (availability, experience, graduationYear, interests, latitude, location, longitude, major, name, skills, university, user), asked by Profiles.Requests.Update#2
+at the flow's settlement frontier
+where
+  earlier, RequestBoundary.request (availability, experience, graduationYear, interests, latitude, location, longitude, major, name, path: "/profiles/update", requestId, session, skills, university)
+then
+  RequestBoundary.respond (requestId, updated: true)
+```
+
 ### Recommendations.Reads.Feed
 
 Authored path: `Recommendations.Reads.Feed`.
-- Covered by [Recommendations](../design/compositions/Recommendations.md), line 14.
-- Covered by [Recommendations](../design/compositions/Recommendations.md), line 21.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 64.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 71.
 
 ```reaction
 when RequestBoundary.request (path: "/recommendations/feed", requestId, session)
@@ -1071,8 +1172,8 @@ then
 ### Recommendations.Reads.Feed#2
 
 Authored path: `Recommendations.Reads.Feed`.
-- Covered by [Recommendations](../design/compositions/Recommendations.md), line 14.
-- Covered by [Recommendations](../design/compositions/Recommendations.md), line 21.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 64.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 71.
 
 ```reaction
 when Sessioning.current (now: time, session, subject: user), asked by Recommendations.Reads.Feed
@@ -1080,6 +1181,265 @@ where
   earlier, RequestBoundary.request (path: "/recommendations/feed", requestId, session)
 then
   RequestBoundary.respond (feed: former "the feed of (viewer)" with (viewer: user), requestId)
+```
+
+### Recommendations.Reads.Preferences
+
+Authored path: `Recommendations.Reads.Preferences`.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 53.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 59.
+
+```reaction
+when RequestBoundary.request (path: "/recommendations/preferences", requestId, session)
+where
+  time is the current flow's instant
+then
+  Sessioning.current (now: time, session)
+```
+
+### Recommendations.Reads.Preferences:defaults#2
+
+Authored path: `Recommendations.Reads.Preferences`.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 53.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 59.
+
+```reaction
+when Sessioning.current (now: time, session, subject: user), asked by Recommendations.Reads.Preferences
+where
+  no Recommending._getPreferences (user)
+  earlier, RequestBoundary.request (path: "/recommendations/preferences", requestId, session)
+then
+  RequestBoundary.respond (availability: null, distance: null, interests: [], requestId, skills: [], universities: [])
+```
+
+### Recommendations.Reads.Preferences:saved#2
+
+Authored path: `Recommendations.Reads.Preferences`.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 53.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 59.
+
+```reaction
+when Sessioning.current (now: time, session, subject: user), asked by Recommendations.Reads.Preferences
+where
+  Recommending._getPreferences (user) has (interests, skills, universities)
+  whether Recommending._getPreferences (user) has (distance)
+  whether Recommending._getPreferences (user) has (availability)
+  earlier, RequestBoundary.request (path: "/recommendations/preferences", requestId, session)
+then
+  RequestBoundary.respond (availability, distance, interests, requestId, skills, universities)
+```
+
+### Recommendations.Refreshing.RefreshOnPreferences
+
+Authored path: `Recommendations.Refreshing.RefreshOnPreferences`.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 29.
+
+```reaction
+when Recommending.setPreferences (user)
+where
+  ProfileSetting._recommendationData (user) has (availability: userAvailabilityForward, interests: userInterestsForward, latitude: userLatitudeForward, longitude: userLongitudeForward, skills: userSkillsForward, university: userUniversityForward, visible: true)
+  ProfileSetting._visibleCandidates (user) has (availability: candidateAvailabilityForward, candidate: candidateForward, interests: candidateInterestsForward, latitude: candidateLatitudeForward, longitude: candidateLongitudeForward, skills: candidateSkillsForward, university: candidateUniversityForward)
+then
+  Recommending.refreshRecommendation (candidate: candidateForward, candidateAvailability: candidateAvailabilityForward, candidateInterests: candidateInterestsForward, candidateLatitude: candidateLatitudeForward, candidateLongitude: candidateLongitudeForward, candidateSkills: candidateSkillsForward, candidateUniversity: candidateUniversityForward, viewer: user, viewerAvailability: userAvailabilityForward, viewerInterests: userInterestsForward, viewerLatitude: userLatitudeForward, viewerLongitude: userLongitudeForward, viewerSkills: userSkillsForward, viewerUniversity: userUniversityForward)
+```
+
+### Recommendations.Refreshing.RefreshOnPreferences#2
+
+Authored path: `Recommendations.Refreshing.RefreshOnPreferences`.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 29.
+
+```reaction
+when Recommending.refreshRecommendation (candidate: candidateForward, candidateAvailability: candidateAvailabilityForward, candidateInterests: candidateInterestsForward, candidateLatitude: candidateLatitudeForward, candidateLongitude: candidateLongitudeForward, candidateSkills: candidateSkillsForward, candidateUniversity: candidateUniversityForward, viewer: user, viewerAvailability: userAvailabilityForward, viewerInterests: userInterestsForward, viewerLatitude: userLatitudeForward, viewerLongitude: userLongitudeForward, viewerSkills: userSkillsForward, viewerUniversity: userUniversityForward), asked by Recommendations.Refreshing.RefreshOnPreferences
+where
+  ProfileSetting._recommendationData (user) has (availability: userAvailabilityBack, interests: userInterestsBack, latitude: userLatitudeBack, longitude: userLongitudeBack, skills: userSkillsBack, university: userUniversityBack, visible: true)
+  ProfileSetting._visibleCandidates (user) has (availability: candidateAvailabilityBack, candidate: candidateBack, interests: candidateInterestsBack, latitude: candidateLatitudeBack, longitude: candidateLongitudeBack, skills: candidateSkillsBack, university: candidateUniversityBack)
+then
+  Recommending.refreshRecommendation (candidate: user, candidateAvailability: userAvailabilityBack, candidateInterests: userInterestsBack, candidateLatitude: userLatitudeBack, candidateLongitude: userLongitudeBack, candidateSkills: userSkillsBack, candidateUniversity: userUniversityBack, viewer: candidateBack, viewerAvailability: candidateAvailabilityBack, viewerInterests: candidateInterestsBack, viewerLatitude: candidateLatitudeBack, viewerLongitude: candidateLongitudeBack, viewerSkills: candidateSkillsBack, viewerUniversity: candidateUniversityBack)
+```
+
+### Recommendations.Requests.SetPreferences
+
+Authored path: `Recommendations.Requests.SetPreferences`.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 14.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 43.
+
+```reaction
+when RequestBoundary.request (availability, distance, interests, path: "/recommendations/set-preferences", requestId, session, skills, universities)
+where
+  time is the current flow's instant
+then
+  Sessioning.current (now: time, session)
+```
+
+### Recommendations.Requests.SetPreferences:availability-only#2
+
+Authored path: `Recommendations.Requests.SetPreferences`.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 14.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 43.
+
+```reaction
+when Sessioning.current (now: time, session, subject: user), asked by Recommendations.Requests.SetPreferences
+where
+  ProfileSetting._recommendationData (user)
+  earlier, RequestBoundary.request (availability, distance, interests, path: "/recommendations/set-preferences", requestId, session, skills, universities)
+  hasDistance is numberSupplied (value: distance)
+  hasDistance is among [false]
+  hasAvailability is numberSupplied (value: availability)
+  hasAvailability is among [true]
+then
+  Recommending.setPreferences (availability, interests, skills, universities, user)
+```
+
+### Recommendations.Requests.SetPreferences:availability-only#3
+
+Authored path: `Recommendations.Requests.SetPreferences`.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 14.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 43.
+
+```reaction
+when Recommending.setPreferences (availability, interests, skills, universities, user), asked by Recommendations.Requests.SetPreferences:availability-only#2
+at the flow's settlement frontier
+where
+  ProfileSetting._recommendationData (user)
+  earlier, RequestBoundary.request (availability, distance, interests, path: "/recommendations/set-preferences", requestId, session, skills, universities)
+then
+  RequestBoundary.respond (requestId, saved: true)
+```
+
+### Recommendations.Requests.SetPreferences:distance-and-availability#2
+
+Authored path: `Recommendations.Requests.SetPreferences`.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 14.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 43.
+
+```reaction
+when Sessioning.current (now: time, session, subject: user), asked by Recommendations.Requests.SetPreferences
+where
+  ProfileSetting._recommendationData (user)
+  earlier, RequestBoundary.request (availability, distance, interests, path: "/recommendations/set-preferences", requestId, session, skills, universities)
+  hasDistance is numberSupplied (value: distance)
+  hasDistance is among [true]
+  hasAvailability is numberSupplied (value: availability)
+  hasAvailability is among [true]
+then
+  Recommending.setPreferences (availability, distance, interests, skills, universities, user)
+```
+
+### Recommendations.Requests.SetPreferences:distance-and-availability#3
+
+Authored path: `Recommendations.Requests.SetPreferences`.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 14.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 43.
+
+```reaction
+when Recommending.setPreferences (availability, distance, interests, skills, universities, user), asked by Recommendations.Requests.SetPreferences:distance-and-availability#2
+at the flow's settlement frontier
+where
+  ProfileSetting._recommendationData (user)
+  earlier, RequestBoundary.request (availability, distance, interests, path: "/recommendations/set-preferences", requestId, session, skills, universities)
+then
+  RequestBoundary.respond (requestId, saved: true)
+```
+
+### Recommendations.Requests.SetPreferences:distance-only#2
+
+Authored path: `Recommendations.Requests.SetPreferences`.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 14.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 43.
+
+```reaction
+when Sessioning.current (now: time, session, subject: user), asked by Recommendations.Requests.SetPreferences
+where
+  ProfileSetting._recommendationData (user)
+  earlier, RequestBoundary.request (availability, distance, interests, path: "/recommendations/set-preferences", requestId, session, skills, universities)
+  hasDistance is numberSupplied (value: distance)
+  hasDistance is among [true]
+  hasAvailability is numberSupplied (value: availability)
+  hasAvailability is among [false]
+then
+  Recommending.setPreferences (distance, interests, skills, universities, user)
+```
+
+### Recommendations.Requests.SetPreferences:distance-only#3
+
+Authored path: `Recommendations.Requests.SetPreferences`.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 14.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 43.
+
+```reaction
+when Recommending.setPreferences (distance, interests, skills, universities, user), asked by Recommendations.Requests.SetPreferences:distance-only#2
+at the flow's settlement frontier
+where
+  ProfileSetting._recommendationData (user)
+  earlier, RequestBoundary.request (availability, distance, interests, path: "/recommendations/set-preferences", requestId, session, skills, universities)
+then
+  RequestBoundary.respond (requestId, saved: true)
+```
+
+### Recommendations.Requests.SetPreferences:no-numbers#2
+
+Authored path: `Recommendations.Requests.SetPreferences`.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 14.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 43.
+
+```reaction
+when Sessioning.current (now: time, session, subject: user), asked by Recommendations.Requests.SetPreferences
+where
+  ProfileSetting._recommendationData (user)
+  earlier, RequestBoundary.request (availability, distance, interests, path: "/recommendations/set-preferences", requestId, session, skills, universities)
+  hasDistance is numberSupplied (value: distance)
+  hasDistance is among [false]
+  hasAvailability is numberSupplied (value: availability)
+  hasAvailability is among [false]
+then
+  Recommending.setPreferences (interests, skills, universities, user)
+```
+
+### Recommendations.Requests.SetPreferences:no-numbers#3
+
+Authored path: `Recommendations.Requests.SetPreferences`.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 14.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 43.
+
+```reaction
+when Recommending.setPreferences (interests, skills, universities, user), asked by Recommendations.Requests.SetPreferences:no-numbers#2
+at the flow's settlement frontier
+where
+  ProfileSetting._recommendationData (user)
+  earlier, RequestBoundary.request (availability, distance, interests, path: "/recommendations/set-preferences", requestId, session, skills, universities)
+then
+  RequestBoundary.respond (requestId, saved: true)
+```
+
+### Recommendations.Requests.SetPreferences:no-profile#2
+
+Authored path: `Recommendations.Requests.SetPreferences`.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 14.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 43.
+
+```reaction
+when Sessioning.current (now: time, session, subject: user), asked by Recommendations.Requests.SetPreferences
+where
+  no ProfileSetting._recommendationData (user)
+  earlier, RequestBoundary.request (availability, distance, interests, path: "/recommendations/set-preferences", requestId, session, skills, universities)
+then
+  RequestBoundary.respond (error: "PREFERENCES_NEED_PROFILE", requestId)
+```
+
+### Recommendations.Requests.SetPreferences:no-profile#3
+
+Authored path: `Recommendations.Requests.SetPreferences`.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 14.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 43.
+
+```reaction
+when RequestBoundary.respond (error: "PREFERENCES_NEED_PROFILE", requestId), asked by Recommendations.Requests.SetPreferences:no-profile#2
+at the flow's settlement frontier
+where
+  earlier, Sessioning.current (now: time, session, subject: user), asked by Recommendations.Requests.SetPreferences
+  ProfileSetting._recommendationData (user)
+then
+  RequestBoundary.respond (requestId, saved: true)
 ```
 
 ## Endpoint input contracts
@@ -1105,4 +1465,7 @@ not listed here have no explicit input contract.
 - `/profiles/mine` — fills `session` with "" when absent
 - `/profiles/publish` — fills `session` with "" when absent
 - `/profiles/set-pitch` — requires `pitch`; fills `session` with "" when absent
+- `/profiles/update` — requires `name`, `university`, `major`, `graduationYear`, `skills`, `experience`, `interests`, `location`, `latitude`, `longitude`, `availability`; fills `session` with "" when absent
 - `/recommendations/feed` — fills `session` with "" when absent
+- `/recommendations/preferences` — fills `session` with "" when absent
+- `/recommendations/set-preferences` — requires `skills`, `interests`, `universities`; fills `availability` with null when absent; fills `distance` with null when absent; fills `session` with "" when absent

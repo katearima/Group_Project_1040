@@ -147,6 +147,8 @@ const computations = {
   sessionLifetime: (_input: Record<string, never>): number => 1_800_000,
   profileLink: ({ user }: { user: string }): string => `/profile/${user}`,
   matchesLink: (_input: { user: string }): string => "/matches",
+  numberSupplied: ({ value }: { value?: number | null }): boolean =>
+    typeof value === "number",
 };
 
 export const applicationConceptSet = conceptSet(

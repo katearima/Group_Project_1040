@@ -26,7 +26,7 @@ export function sessionUser(v: Vars) {
 }
 
 // ---------------------------------------------------------------------------------------
-// Recommendation refresh (Reaction 1)
+// Recommendation refresh (Reactions 1 and 2)
 // ---------------------------------------------------------------------------------------
 
 const DATA_FIELDS = ["Skills", "Interests", "University", "Latitude", "Longitude", "Availability"];
@@ -119,6 +119,16 @@ const RefreshOnPublish = refreshAfter((user) =>
   ProfileSetting.publishProfile({ user } as any).responds({}),
 );
 
+/** Reaction 2: a profile update refreshes the user's recommendations while visible. */
+const RefreshOnUpdate = refreshAfter((user) =>
+  ProfileSetting.updateProfile({ user } as any).responds({}),
+);
+
+/** Reaction 2: a new startup pitch refreshes the user's recommendations while visible. */
+const RefreshOnPitch = refreshAfter((user) =>
+  ProfileSetting.setStartupPitch({ user } as any).responds({}),
+);
+
 // ---------------------------------------------------------------------------------------
 // Endpoints
 // ---------------------------------------------------------------------------------------
@@ -160,6 +170,19 @@ const Create = endpoint(
 // The refresh reactions run inside the same flow; `afterFlowSettles` answers only after
 // every refresh the change caused has completed.
 
+const Update = endpoint(
+  "/profiles/update",
+  (bag) => {
+    const v = take(bag, ["session", "user", "time", ...PROFILE_FIELDS]);
+    return receive({ session: v.session, ...profileFields(v) })
+      .then(sessionUser(v))
+      .then(ProfileSetting.updateProfile({ user: v.user, ...profileFields(v) } as any).responds({}))
+      .afterFlowSettles()
+      .then(respond({ updated: true }));
+  },
+  { input: { required: [...PROFILE_FIELDS], defaults: { session: "" } } },
+);
+
 const SetPitch = endpoint(
   "/profiles/set-pitch",
   (bag) => {
@@ -167,6 +190,7 @@ const SetPitch = endpoint(
     return receive({ session: v.session, pitch: v.pitch })
       .then(sessionUser(v))
       .then(ProfileSetting.setStartupPitch({ user: v.user, pitch: v.pitch }).responds({}))
+      .afterFlowSettles()
       .then(respond({ pitchSet: true }));
   },
   { input: { required: ["pitch"], defaults: { session: "" } } },
@@ -210,7 +234,7 @@ const Mine = endpoint(
 );
 
 export const composition = {
-  Requests: { Create, SetPitch, Publish },
+  Requests: { Create, Update, SetPitch, Publish },
   Reads: { Mine },
-  Refreshing: { RefreshOnPublish },
+  Refreshing: { RefreshOnPublish, RefreshOnUpdate, RefreshOnPitch },
 };
