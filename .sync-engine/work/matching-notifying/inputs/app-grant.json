@@ -1,0 +1,66 @@
+{
+  "readableAreas": [
+    {
+      "area": "application",
+      "path": "design"
+    },
+    {
+      "area": "application",
+      "path": "generated.config.ts"
+    },
+    {
+      "area": "application",
+      "path": "package.json"
+    },
+    {
+      "area": "application",
+      "path": "src"
+    },
+    {
+      "area": "application",
+      "path": "tsconfig.json"
+    }
+  ],
+  "writableAreas": [
+    {
+      "area": "owned-integration",
+      "path": "src/assembly.ts"
+    },
+    {
+      "area": "owned-integration",
+      "path": "src/composition.ts"
+    },
+    {
+      "area": "owned-integration",
+      "path": "src/compositions"
+    },
+    {
+      "area": "owned-integration",
+      "path": "src/concepts.ts"
+    },
+    {
+      "area": "owned-integration",
+      "path": "src/main.ts"
+    },
+    {
+      "area": "owned-configuration",
+      "path": "generated"
+    },
+    {
+      "area": "owned-configuration",
+      "path": "generated.config.ts"
+    },
+    {
+      "area": "owned-test",
+      "path": "src/integration.test.ts"
+    }
+  ],
+  "toolKinds": [
+    "repository-read",
+    "repository-write"
+  ],
+  "projectShell": "project-local",
+  "network": false,
+  "generatedOutput": true,
+  "longRunningProcesses": false
+}

@@ -1,0 +1,139 @@
+{
+  "state": "finalized",
+  "work": {
+    "slug": "matching-notifying",
+    "path": "/Users/katearima/Documents/6.104/Group_Project_1040/.sync-engine/work/matching-notifying"
+  },
+  "role": "critic",
+  "phase": "verification",
+  "execution": "delegated",
+  "independent": true,
+  "harness": "claude-code",
+  "timeoutSeconds": 1800,
+  "prompt": {
+    "path": "/Users/katearima/Documents/6.104/Group_Project_1040/.sync-engine/work/matching-notifying/2026-11-23T01-04-33Z-critic-verification.prompt.md",
+    "sha256": "b63fdaeea74fc51fe1dc45a21f78d98ebd946e761f515240e6d07c835ded498b"
+  },
+  "capabilities": {
+    "path": "/Users/katearima/Documents/6.104/Group_Project_1040/.sync-engine/work/matching-notifying/2026-11-23T01-04-33Z-critic-verification.capabilities.json",
+    "sha256": "2a58328804dcdfceb42899aad7881231f2d44abea2ec226c298ef938f0e8f228"
+  },
+  "grant": {
+    "readableAreas": [
+      {
+        "area": "work-unit",
+        "path": "brief.md"
+      },
+      {
+        "area": "design",
+        "path": "compositions"
+      },
+      {
+        "area": "design",
+        "path": "concepts"
+      },
+      {
+        "area": "design",
+        "path": "types.md"
+      }
+    ],
+    "writableAreas": [],
+    "toolKinds": [
+      "repository-read"
+    ],
+    "projectShell": "none",
+    "network": false,
+    "generatedOutput": false,
+    "longRunningProcesses": false
+  },
+  "response": {
+    "path": "/Users/katearima/Documents/6.104/Group_Project_1040/.sync-engine/work/matching-notifying/2026-11-23T01-04-33Z-critic-verification.response.md",
+    "sha256": "7aa15627e1c8bcafae910cd8c5eeb5e33151ca885af7b4e7bb4c433d80e0b3bd",
+    "bytes": 1780
+  },
+  "retainedSources": [
+    {
+      "inputId": "brief",
+      "displayName": ".sync-engine/work/matching-notifying/brief.md",
+      "sha256": "0d04086743d29e183994b645233523e648efe6b24220b725e71411f5aec8c977"
+    },
+    {
+      "inputId": "review-guidance",
+      "displayName": "node_modules/@mit-sdg/sync-engine-skill/skills/sync-engine/prompts/guidance/design/boundary.md",
+      "sha256": "26bd10c2b78a0be545a2d6e732fec74609253f0a3ebd188c1804a70bbfe6580d"
+    },
+    {
+      "inputId": "review-guidance",
+      "displayName": "node_modules/@mit-sdg/sync-engine-skill/skills/sync-engine/prompts/guidance/design/contracts.md",
+      "sha256": "11bb5143e7164b0694c3dd4f09c9000ed6363301df2aba9435c3f86cb20fd954"
+    },
+    {
+      "inputId": "review-guidance",
+      "displayName": "node_modules/@mit-sdg/sync-engine-skill/skills/sync-engine/prompts/guidance/design/ssf-reading.md",
+      "sha256": "13659e9d49f0e4020c5688cc89e1760f9f0cf81042e12c2f7284d13f2410a480"
+    }
+  ],
+  "policy": {
+    "review": "required",
+    "execution": "delegated"
+  },
+  "workspace": {
+    "root": "/Users/katearima/Documents/6.104/Group_Project_1040",
+    "baseline": {
+      "path": "/Users/katearima/Documents/6.104/Group_Project_1040/.sync-engine/work/matching-notifying/2026-11-23T01-04-33Z-critic-verification.baseline.json",
+      "sha256": "84d3acc888cf1f63b772bc7755b47570b5d45bcba3810b755efc8020c8d35d12"
+    }
+  },
+  "design": {
+    "root": "/Users/katearima/Documents/6.104/Group_Project_1040/design",
+    "before": "9289154f5f02321e0b492851266f0594cb245759b36e13e7b65c525cf80dc1bd",
+    "beforeFiles": [
+      {
+        "path": "compositions/Accounts.md",
+        "sha256": "c620ab7d774e5b6bf66165b169a9d6d01ccc2abaac5ff09c8aa9e43662ae5c0c"
+      },
+      {
+        "path": "compositions/Matching.md",
+        "sha256": "571d5695e01bf28c03d23bb9ffd591e4a72e3122e0f7d4ca174e0e290d0d0a88"
+      },
+      {
+        "path": "compositions/Notifications.md",
+        "sha256": "5f176f69f3c51bb5d3a9cf5eca4396183977502ba20cca266952b33830c59031"
+      },
+      {
+        "path": "concepts/Authenticating.md",
+        "sha256": "81bf7fe29baa3a48eadaf71ea686e7f2c9962b03ce78d16f70651128a82a483c"
+      },
+      {
+        "path": "concepts/MutualMatching.md",
+        "sha256": "03888b7cbf0cdbc221bd1a91f54179d16592778be31ca0fcc2fbd5560bd99929"
+      },
+      {
+        "path": "concepts/Notifying.md",
+        "sha256": "893c4e8cc3b5a4a8c42d6e2d9742f43b7c76f04bf732682c7ad14736b61b9dce"
+      },
+      {
+        "path": "concepts/Sessioning.md",
+        "sha256": "9e8f3dc547e08740d75eb1fff6c486b06c3c04a9087cd6fbee5e0a6abd937c43"
+      },
+      {
+        "path": "types.md",
+        "sha256": "86dfcd23731a0f44f203e5e91fb36e475be7c5f49f80f5950be5a629ffa1f249"
+      }
+    ]
+  },
+  "review": {
+    "subject": "design",
+    "digest": "9289154f5f02321e0b492851266f0594cb245759b36e13e7b65c525cf80dc1bd"
+  },
+  "relationship": {
+    "kind": "continuation",
+    "recordPath": "/Users/katearima/Documents/6.104/Group_Project_1040/.sync-engine/work/matching-notifying/2026-11-23T00-57-07Z-critic-contracts.record.json",
+    "targetHarness": "claude-code",
+    "targetAgentId": "ab2a049f74995c58c"
+  },
+  "status": "completed",
+  "result": "approve",
+  "agentId": "ab2a049f74995c58c",
+  "enforcement": "prompt-guided"
+}

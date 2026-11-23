@@ -1,0 +1,262 @@
+{
+  "state": "finalized",
+  "work": {
+    "slug": "matching-notifying",
+    "path": "/Users/katearima/Documents/6.104/Group_Project_1040/.sync-engine/work/matching-notifying"
+  },
+  "role": "application-worker",
+  "phase": "implementation",
+  "execution": "delegated",
+  "independent": true,
+  "harness": "claude-code",
+  "timeoutSeconds": 1800,
+  "prompt": {
+    "path": "/Users/katearima/Documents/6.104/Group_Project_1040/.sync-engine/work/matching-notifying/2026-11-23T01-16-04Z-application-worker-implementation.prompt.md",
+    "sha256": "64e48e3d3f3171d8cc415763641b635fe671780d2a826f1227758fbe35fead4c"
+  },
+  "capabilities": {
+    "path": "/Users/katearima/Documents/6.104/Group_Project_1040/.sync-engine/work/matching-notifying/2026-11-23T01-16-04Z-application-worker-implementation.capabilities.json",
+    "sha256": "67996d734c338c6c80c6778cd5d259e9fb9a99f0cf1819a626ac2fce4850ed2c"
+  },
+  "grant": {
+    "readableAreas": [
+      {
+        "area": "application",
+        "path": "design"
+      },
+      {
+        "area": "application",
+        "path": "generated.config.ts"
+      },
+      {
+        "area": "application",
+        "path": "package.json"
+      },
+      {
+        "area": "application",
+        "path": "src"
+      },
+      {
+        "area": "application",
+        "path": "tsconfig.json"
+      }
+    ],
+    "writableAreas": [
+      {
+        "area": "owned-integration",
+        "path": "src/assembly.ts"
+      },
+      {
+        "area": "owned-integration",
+        "path": "src/composition.ts"
+      },
+      {
+        "area": "owned-integration",
+        "path": "src/compositions"
+      },
+      {
+        "area": "owned-integration",
+        "path": "src/concepts.ts"
+      },
+      {
+        "area": "owned-integration",
+        "path": "src/main.ts"
+      },
+      {
+        "area": "owned-configuration",
+        "path": "generated"
+      },
+      {
+        "area": "owned-configuration",
+        "path": "generated.config.ts"
+      },
+      {
+        "area": "owned-test",
+        "path": "src/integration.test.ts"
+      }
+    ],
+    "toolKinds": [
+      "repository-read",
+      "repository-write"
+    ],
+    "projectShell": "project-local",
+    "network": false,
+    "generatedOutput": true,
+    "longRunningProcesses": false
+  },
+  "response": {
+    "path": "/Users/katearima/Documents/6.104/Group_Project_1040/.sync-engine/work/matching-notifying/2026-11-23T01-16-04Z-application-worker-implementation.response.md",
+    "sha256": "9c20c4edd5af6ed98ca735aea6792befa618f7d45efd01169a6723d00dd710b0",
+    "bytes": 5376
+  },
+  "retainedSources": [
+    {
+      "inputId": "brief",
+      "displayName": ".sync-engine/work/matching-notifying/brief.md",
+      "sha256": "bba28f448acba5203c1b707d1779ab629689156b64d0d64878e9fa6b99807a8d"
+    },
+    {
+      "inputId": "types",
+      "displayName": "design/types.md",
+      "sha256": "86dfcd23731a0f44f203e5e91fb36e475be7c5f49f80f5950be5a629ffa1f249"
+    },
+    {
+      "inputId": "compositions",
+      "displayName": "design/compositions/Accounts.md",
+      "sha256": "c620ab7d774e5b6bf66165b169a9d6d01ccc2abaac5ff09c8aa9e43662ae5c0c"
+    },
+    {
+      "inputId": "compositions",
+      "displayName": "design/compositions/Matching.md",
+      "sha256": "571d5695e01bf28c03d23bb9ffd591e4a72e3122e0f7d4ca174e0e290d0d0a88"
+    },
+    {
+      "inputId": "compositions",
+      "displayName": "design/compositions/Notifications.md",
+      "sha256": "5f176f69f3c51bb5d3a9cf5eca4396183977502ba20cca266952b33830c59031"
+    },
+    {
+      "inputId": "concept-specifications",
+      "displayName": "design/concepts/Authenticating.md",
+      "sha256": "81bf7fe29baa3a48eadaf71ea686e7f2c9962b03ce78d16f70651128a82a483c"
+    },
+    {
+      "inputId": "concept-specifications",
+      "displayName": "design/concepts/MutualMatching.md",
+      "sha256": "03888b7cbf0cdbc221bd1a91f54179d16592778be31ca0fcc2fbd5560bd99929"
+    },
+    {
+      "inputId": "concept-specifications",
+      "displayName": "design/concepts/Notifying.md",
+      "sha256": "893c4e8cc3b5a4a8c42d6e2d9742f43b7c76f04bf732682c7ad14736b61b9dce"
+    },
+    {
+      "inputId": "concept-specifications",
+      "displayName": "design/concepts/Sessioning.md",
+      "sha256": "9e8f3dc547e08740d75eb1fff6c486b06c3c04a9087cd6fbee5e0a6abd937c43"
+    },
+    {
+      "inputId": "concept-public-surfaces",
+      "displayName": "src/concepts/MutualMatching.ts",
+      "sha256": "b3327de2f4cf8ee673835ee1dad8d252ea5a5eb6cdea4500c07a44f8047ebb60"
+    },
+    {
+      "inputId": "concept-public-surfaces",
+      "displayName": "src/concepts/Notifying.ts",
+      "sha256": "d9231d9e218d0ea1a704473a0ad64ecc5b02bf84070d8f974057bd413ff59ac4"
+    },
+    {
+      "inputId": "concept-public-surfaces",
+      "displayName": "src/concepts/catalog/authenticating/authenticating.shared.ts",
+      "sha256": "f056cdd23f99ef243fb3211a5833e5b84bd3e9f31fa9681ee9be5b9f42a3b9af"
+    },
+    {
+      "inputId": "concept-public-surfaces",
+      "displayName": "src/concepts/catalog/sessioning/sessioning.shared.ts",
+      "sha256": "148059171cd99d5293a0aa5bea34ceca6e5114ee086d19b2a78c3f1dc6559ca3"
+    },
+    {
+      "inputId": "existing-wiring",
+      "displayName": "generated.config.ts",
+      "sha256": "6b1fb177bacd47aa26b8df90a7afea27765c5ace22dbe7f090c8954fd1022ce5"
+    },
+    {
+      "inputId": "existing-wiring",
+      "displayName": "package.json",
+      "sha256": "edc51ca3e0ffa43e31fae582fb8e3979cfe3a333b18e4f2b8ce4f5549e7938aa"
+    },
+    {
+      "inputId": "existing-wiring",
+      "displayName": "src/assembly.ts",
+      "sha256": "1afc51736b2619a77a96a81323c6627af141d9d147320af43b036d52a026f5eb"
+    },
+    {
+      "inputId": "existing-wiring",
+      "displayName": "src/concepts.ts",
+      "sha256": "802760cbc88593a2548f5d4b16ebf0f68ca06e7c31144812376d5f18dbf5ec09"
+    },
+    {
+      "inputId": "existing-wiring",
+      "displayName": "src/main.ts",
+      "sha256": "6eca58b17f1c6599c35dcba67d8781264e81e29aec989c18d92b478c90ce1409"
+    },
+    {
+      "inputId": "public-references",
+      "displayName": "node_modules/@mit-sdg/sync-engine-skill/skills/sync-engine/prompts/guidance/api/application-example.md",
+      "sha256": "813740df77d003d363da5a869d4ed675c4d4cc6f4a2a1c8db5ae2caeb428d54e"
+    },
+    {
+      "inputId": "public-references",
+      "displayName": "node_modules/@mit-sdg/sync-engine-skill/skills/sync-engine/prompts/guidance/api/http-host.md",
+      "sha256": "8ee923de29599aa67b0d9fb9cab5dc2efe91058c217bd4cecb0239164675904a"
+    },
+    {
+      "inputId": "examples",
+      "displayName": ".sync-engine/work/matching-notifying/inputs/catalog/authenticating-registry.ts",
+      "sha256": "434349a07da24231490485ecc389931b8b7e7dcff307fcedfd2af41ef5afbc5e"
+    },
+    {
+      "inputId": "examples",
+      "displayName": ".sync-engine/work/matching-notifying/inputs/catalog/message-board.ts",
+      "sha256": "5da94c93927249c693688d9ed6c0ddfcc573cc9e8b70a3f15caf7abe190e5feb"
+    },
+    {
+      "inputId": "examples",
+      "displayName": ".sync-engine/work/matching-notifying/inputs/catalog/sessioning-registry.ts",
+      "sha256": "d1a348df527b80936f6384cf21b3b956e8af6b816fac49edf02be25ffa92b1be"
+    }
+  ],
+  "policy": {
+    "review": "required",
+    "execution": "delegated"
+  },
+  "workspace": {
+    "root": "/Users/katearima/Documents/6.104/Group_Project_1040",
+    "baseline": {
+      "path": "/Users/katearima/Documents/6.104/Group_Project_1040/.sync-engine/work/matching-notifying/2026-11-23T01-16-04Z-application-worker-implementation.baseline.json",
+      "sha256": "dacdd5f14965a6bf1c3730df3a5530facc89c046c4bcb094e6d00bccb8b15ff5"
+    }
+  },
+  "design": {
+    "root": "/Users/katearima/Documents/6.104/Group_Project_1040/design",
+    "before": "9289154f5f02321e0b492851266f0594cb245759b36e13e7b65c525cf80dc1bd",
+    "beforeFiles": [
+      {
+        "path": "compositions/Accounts.md",
+        "sha256": "c620ab7d774e5b6bf66165b169a9d6d01ccc2abaac5ff09c8aa9e43662ae5c0c"
+      },
+      {
+        "path": "compositions/Matching.md",
+        "sha256": "571d5695e01bf28c03d23bb9ffd591e4a72e3122e0f7d4ca174e0e290d0d0a88"
+      },
+      {
+        "path": "compositions/Notifications.md",
+        "sha256": "5f176f69f3c51bb5d3a9cf5eca4396183977502ba20cca266952b33830c59031"
+      },
+      {
+        "path": "concepts/Authenticating.md",
+        "sha256": "81bf7fe29baa3a48eadaf71ea686e7f2c9962b03ce78d16f70651128a82a483c"
+      },
+      {
+        "path": "concepts/MutualMatching.md",
+        "sha256": "03888b7cbf0cdbc221bd1a91f54179d16592778be31ca0fcc2fbd5560bd99929"
+      },
+      {
+        "path": "concepts/Notifying.md",
+        "sha256": "893c4e8cc3b5a4a8c42d6e2d9742f43b7c76f04bf732682c7ad14736b61b9dce"
+      },
+      {
+        "path": "concepts/Sessioning.md",
+        "sha256": "9e8f3dc547e08740d75eb1fff6c486b06c3c04a9087cd6fbee5e0a6abd937c43"
+      },
+      {
+        "path": "types.md",
+        "sha256": "86dfcd23731a0f44f203e5e91fb36e475be7c5f49f80f5950be5a629ffa1f249"
+      }
+    ]
+  },
+  "status": "completed",
+  "result": "complete",
+  "agentId": "a5fbed35de0a9522f",
+  "enforcement": "prompt-guided"
+}

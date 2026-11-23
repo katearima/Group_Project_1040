@@ -1,0 +1,163 @@
+{
+  "state": "finalized",
+  "work": {
+    "slug": "matching-notifying",
+    "path": "/Users/katearima/Documents/6.104/Group_Project_1040/.sync-engine/work/matching-notifying"
+  },
+  "role": "designer",
+  "phase": "contracts",
+  "execution": "delegated",
+  "independent": true,
+  "harness": "claude-code",
+  "timeoutSeconds": 1800,
+  "prompt": {
+    "path": "/Users/katearima/Documents/6.104/Group_Project_1040/.sync-engine/work/matching-notifying/2026-11-23T00-52-49Z-designer-contracts.prompt.md",
+    "sha256": "4a78a208f779e7f45ebac36695d16b1875d1dc9dbc2c4ee915c5720a5b961e03"
+  },
+  "capabilities": {
+    "path": "/Users/katearima/Documents/6.104/Group_Project_1040/.sync-engine/work/matching-notifying/2026-11-23T00-52-49Z-designer-contracts.capabilities.json",
+    "sha256": "b2c2007fafbf7a2c2caf8aca9aecc888fd3b99d04282430cbedcdc5608e6db11"
+  },
+  "grant": {
+    "readableAreas": [
+      {
+        "area": "work-unit",
+        "path": "brief.md"
+      }
+    ],
+    "writableAreas": [
+      {
+        "area": "assigned-design",
+        "path": "compositions/Accounts.md"
+      },
+      {
+        "area": "assigned-design",
+        "path": "compositions/Matching.md"
+      },
+      {
+        "area": "assigned-design",
+        "path": "compositions/Notifications.md"
+      },
+      {
+        "area": "assigned-design",
+        "path": "concepts/Authenticating.md"
+      },
+      {
+        "area": "assigned-design",
+        "path": "concepts/MutualMatching.md"
+      },
+      {
+        "area": "assigned-design",
+        "path": "concepts/Notifying.md"
+      },
+      {
+        "area": "assigned-design",
+        "path": "concepts/Sessioning.md"
+      },
+      {
+        "area": "assigned-design",
+        "path": "types.md"
+      }
+    ],
+    "toolKinds": [
+      "repository-read",
+      "repository-write"
+    ],
+    "projectShell": "project-validation",
+    "network": false,
+    "generatedOutput": false,
+    "longRunningProcesses": false
+  },
+  "response": {
+    "path": "/Users/katearima/Documents/6.104/Group_Project_1040/.sync-engine/work/matching-notifying/2026-11-23T00-52-49Z-designer-contracts.response.md",
+    "sha256": "8766bc14bbde5848f735e3a9712c2521e9ed4f61e4df6b09986a4301b404d272",
+    "bytes": 5235
+  },
+  "retainedSources": [
+    {
+      "inputId": "brief",
+      "displayName": ".sync-engine/work/matching-notifying/brief.md",
+      "sha256": "f15348bb91682cd8f88e590ac47a1f8575b19f93778fd1d007f630f8b2c7c582"
+    },
+    {
+      "inputId": "catalog-contracts",
+      "displayName": ".sync-engine/work/matching-notifying/inputs/catalog-authenticating.md",
+      "sha256": "81bf7fe29baa3a48eadaf71ea686e7f2c9962b03ce78d16f70651128a82a483c"
+    },
+    {
+      "inputId": "catalog-contracts",
+      "displayName": ".sync-engine/work/matching-notifying/inputs/catalog-sessioning.md",
+      "sha256": "9e8f3dc547e08740d75eb1fff6c486b06c3c04a9087cd6fbee5e0a6abd937c43"
+    },
+    {
+      "inputId": "context",
+      "displayName": ".sync-engine/work/matching-notifying/inputs/catalog-message-board.md",
+      "sha256": "1994c3f93ec47a263d98506f3e667eda1773b183c0875e1bd0bc21461dfa188d"
+    },
+    {
+      "inputId": "context",
+      "displayName": ".sync-engine/work/matching-notifying/inputs/concept-design-excerpt.md",
+      "sha256": "21d547230e0a8036960ef0ee0c6ef0ba1f176a5ff9bde1da91b88d2ad3685a3e"
+    }
+  ],
+  "policy": {
+    "review": "required",
+    "execution": "delegated"
+  },
+  "workspace": {
+    "root": "/Users/katearima/Documents/6.104/Group_Project_1040",
+    "baseline": {
+      "path": "/Users/katearima/Documents/6.104/Group_Project_1040/.sync-engine/work/matching-notifying/2026-11-23T00-52-49Z-designer-contracts.baseline.json",
+      "sha256": "6896dd45b71f4967110e6aa64b8276b5308d7c33a2d45d9c3ff2f34a410adc7e"
+    }
+  },
+  "design": {
+    "root": "/Users/katearima/Documents/6.104/Group_Project_1040/design",
+    "before": "9aa86ecdecdbd88fce893e93ad9aa6acf442ac0ae06aca2046a567a7c207dcd1",
+    "beforeFiles": [
+      {
+        "path": "types.md",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "after": "b8205c487eaf7d1aad3a31d8e7150bf26eaa4403ce433a4d0299503d4bc761f1",
+    "afterFiles": [
+      {
+        "path": "compositions/Accounts.md",
+        "sha256": "1de1a41c95411656648f94dd7b58bcfe92a4a6e74c625ba0e9d4ad39467d7861"
+      },
+      {
+        "path": "compositions/Matching.md",
+        "sha256": "1737bdf1f97b9afad5b4ebbf8938aecaefde9a7b9cad79f93359e83ad0eedb0d"
+      },
+      {
+        "path": "compositions/Notifications.md",
+        "sha256": "20b96e68be01632b7fd713b2fec8ca95edc2438332c2170cd135f2b125087b94"
+      },
+      {
+        "path": "concepts/Authenticating.md",
+        "sha256": "81bf7fe29baa3a48eadaf71ea686e7f2c9962b03ce78d16f70651128a82a483c"
+      },
+      {
+        "path": "concepts/MutualMatching.md",
+        "sha256": "03888b7cbf0cdbc221bd1a91f54179d16592778be31ca0fcc2fbd5560bd99929"
+      },
+      {
+        "path": "concepts/Notifying.md",
+        "sha256": "893c4e8cc3b5a4a8c42d6e2d9742f43b7c76f04bf732682c7ad14736b61b9dce"
+      },
+      {
+        "path": "concepts/Sessioning.md",
+        "sha256": "9e8f3dc547e08740d75eb1fff6c486b06c3c04a9087cd6fbee5e0a6abd937c43"
+      },
+      {
+        "path": "types.md",
+        "sha256": "86dfcd23731a0f44f203e5e91fb36e475be7c5f49f80f5950be5a629ffa1f249"
+      }
+    ]
+  },
+  "status": "completed",
+  "result": "complete",
+  "agentId": "af612784d0e1c0e33",
+  "enforcement": "prompt-guided"
+}

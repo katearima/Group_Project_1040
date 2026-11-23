@@ -1,0 +1,133 @@
+{
+  "state": "finalized",
+  "work": {
+    "slug": "matching-notifying",
+    "path": "/Users/katearima/Documents/6.104/Group_Project_1040/.sync-engine/work/matching-notifying"
+  },
+  "role": "critic",
+  "phase": "contracts",
+  "execution": "delegated",
+  "independent": true,
+  "harness": "claude-code",
+  "timeoutSeconds": 1800,
+  "prompt": {
+    "path": "/Users/katearima/Documents/6.104/Group_Project_1040/.sync-engine/work/matching-notifying/2026-11-23T00-57-07Z-critic-contracts.prompt.md",
+    "sha256": "226c9942a677cbce9ba2681407a2c156d897405800e25de0a77762dfa6e794d1"
+  },
+  "capabilities": {
+    "path": "/Users/katearima/Documents/6.104/Group_Project_1040/.sync-engine/work/matching-notifying/2026-11-23T00-57-07Z-critic-contracts.capabilities.json",
+    "sha256": "2a58328804dcdfceb42899aad7881231f2d44abea2ec226c298ef938f0e8f228"
+  },
+  "grant": {
+    "readableAreas": [
+      {
+        "area": "work-unit",
+        "path": "brief.md"
+      },
+      {
+        "area": "design",
+        "path": "compositions"
+      },
+      {
+        "area": "design",
+        "path": "concepts"
+      },
+      {
+        "area": "design",
+        "path": "types.md"
+      }
+    ],
+    "writableAreas": [],
+    "toolKinds": [
+      "repository-read"
+    ],
+    "projectShell": "none",
+    "network": false,
+    "generatedOutput": false,
+    "longRunningProcesses": false
+  },
+  "response": {
+    "path": "/Users/katearima/Documents/6.104/Group_Project_1040/.sync-engine/work/matching-notifying/2026-11-23T00-57-07Z-critic-contracts.response.md",
+    "sha256": "5a3702e4ecf3514341469df004103041d65d227cd3a954c3bae5b224411ca246",
+    "bytes": 8305
+  },
+  "retainedSources": [
+    {
+      "inputId": "brief",
+      "displayName": ".sync-engine/work/matching-notifying/brief.md",
+      "sha256": "f15348bb91682cd8f88e590ac47a1f8575b19f93778fd1d007f630f8b2c7c582"
+    },
+    {
+      "inputId": "affected-contracts",
+      "displayName": "design/concepts/Authenticating.md",
+      "sha256": "81bf7fe29baa3a48eadaf71ea686e7f2c9962b03ce78d16f70651128a82a483c"
+    },
+    {
+      "inputId": "affected-contracts",
+      "displayName": "design/concepts/Sessioning.md",
+      "sha256": "9e8f3dc547e08740d75eb1fff6c486b06c3c04a9087cd6fbee5e0a6abd937c43"
+    },
+    {
+      "inputId": "context",
+      "displayName": ".sync-engine/work/matching-notifying/inputs/concept-design-excerpt.md",
+      "sha256": "21d547230e0a8036960ef0ee0c6ef0ba1f176a5ff9bde1da91b88d2ad3685a3e"
+    }
+  ],
+  "policy": {
+    "review": "required",
+    "execution": "delegated"
+  },
+  "workspace": {
+    "root": "/Users/katearima/Documents/6.104/Group_Project_1040",
+    "baseline": {
+      "path": "/Users/katearima/Documents/6.104/Group_Project_1040/.sync-engine/work/matching-notifying/2026-11-23T00-57-07Z-critic-contracts.baseline.json",
+      "sha256": "a87a054b36acea730568a65c48b7eb1fe4b1c4fc5450a2ce20a2ba973907e82a"
+    }
+  },
+  "design": {
+    "root": "/Users/katearima/Documents/6.104/Group_Project_1040/design",
+    "before": "b8205c487eaf7d1aad3a31d8e7150bf26eaa4403ce433a4d0299503d4bc761f1",
+    "beforeFiles": [
+      {
+        "path": "compositions/Accounts.md",
+        "sha256": "1de1a41c95411656648f94dd7b58bcfe92a4a6e74c625ba0e9d4ad39467d7861"
+      },
+      {
+        "path": "compositions/Matching.md",
+        "sha256": "1737bdf1f97b9afad5b4ebbf8938aecaefde9a7b9cad79f93359e83ad0eedb0d"
+      },
+      {
+        "path": "compositions/Notifications.md",
+        "sha256": "20b96e68be01632b7fd713b2fec8ca95edc2438332c2170cd135f2b125087b94"
+      },
+      {
+        "path": "concepts/Authenticating.md",
+        "sha256": "81bf7fe29baa3a48eadaf71ea686e7f2c9962b03ce78d16f70651128a82a483c"
+      },
+      {
+        "path": "concepts/MutualMatching.md",
+        "sha256": "03888b7cbf0cdbc221bd1a91f54179d16592778be31ca0fcc2fbd5560bd99929"
+      },
+      {
+        "path": "concepts/Notifying.md",
+        "sha256": "893c4e8cc3b5a4a8c42d6e2d9742f43b7c76f04bf732682c7ad14736b61b9dce"
+      },
+      {
+        "path": "concepts/Sessioning.md",
+        "sha256": "9e8f3dc547e08740d75eb1fff6c486b06c3c04a9087cd6fbee5e0a6abd937c43"
+      },
+      {
+        "path": "types.md",
+        "sha256": "86dfcd23731a0f44f203e5e91fb36e475be7c5f49f80f5950be5a629ffa1f249"
+      }
+    ]
+  },
+  "review": {
+    "subject": "design",
+    "digest": "b8205c487eaf7d1aad3a31d8e7150bf26eaa4403ce433a4d0299503d4bc761f1"
+  },
+  "status": "completed",
+  "result": "revise",
+  "agentId": "ab2a049f74995c58c",
+  "enforcement": "prompt-guided"
+}

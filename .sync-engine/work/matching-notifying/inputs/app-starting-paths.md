@@ -1,0 +1,5 @@
+- src/concepts.ts, src/assembly.ts, src/main.ts, generated.config.ts (existing, edit)
+- src/composition.ts or src/compositions/ (create)
+- src/integration.test.ts (create)
+- src/concepts/*.ts and src/concepts/catalog/** (read-only concept surfaces)
+- design/** (read-only)

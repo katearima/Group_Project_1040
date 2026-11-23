@@ -1,0 +1,38 @@
+{
+  "readableAreas": [
+    {
+      "area": "application",
+      "path": "design/concepts"
+    },
+    {
+      "area": "application",
+      "path": "package.json"
+    },
+    {
+      "area": "application",
+      "path": "src/text.d.ts"
+    },
+    {
+      "area": "application",
+      "path": "tsconfig.json"
+    }
+  ],
+  "writableAreas": [
+    {
+      "area": "owned-concept",
+      "path": "src/concepts"
+    },
+    {
+      "area": "owned-test",
+      "path": "src/concepts"
+    }
+  ],
+  "toolKinds": [
+    "repository-read",
+    "repository-write"
+  ],
+  "projectShell": "project-local",
+  "network": false,
+  "generatedOutput": false,
+  "longRunningProcesses": false
+}

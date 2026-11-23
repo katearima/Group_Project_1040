@@ -1,0 +1,3 @@
+- src/concepts/ (create)
+- design/concepts/MutualMatching.md, design/concepts/Notifying.md (read-only contracts)
+- tsconfig.json, package.json (read-only)
