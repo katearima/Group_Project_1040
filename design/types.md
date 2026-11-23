@@ -17,7 +17,16 @@ instantiate MutualMatching with
 
 instantiate Notifying with
   User is Authenticating.Account
+
+instantiate ProfileSetting with
+  User is Authenticating.Account
+
+instantiate Recommending with
+  User is Authenticating.Account
 ```
+
+Profile owners and the viewers and candidates of recommendations are the same Account
+identity, so the session user's profile, preferences, and feed all key on one identity.
 
 Every flow binds one instant when it enters the application and passes that same instant
 to each session check, session start or end, and notification it causes.

@@ -86,6 +86,74 @@ Defined in [Notifying](../design/concepts/Notifying.md), line 1.
 - `Notifying` — instance of `Notifying` — [Application types and instances](../design/types.md), line 18.
   - `User` is `Authenticating.Account` — [Application types and instances](../design/types.md), line 19.
 
+### ProfileSetting
+
+Defined in [ProfileSetting](../design/concepts/ProfileSetting.md), line 1.
+
+#### Actions
+
+- `createProfile(user: User, role: Role, name: String, university: String, major: String, graduationYear: Number, skills: Entries, experience: String, interests: Entries, location: String, latitude: Number, longitude: Number, availability: Number) : returns (profile: Profile)`
+  - Refuses `PROFILE_ALREADY_EXISTS`: You already have a profile.
+  - Refuses `INVALID_PROFILE`: Graduation year, coordinates, availability, skills, and interests must be valid.
+- `setStartupPitch(user: User, pitch: String) : returns ()`
+  - Refuses `PITCH_PROFILE_NOT_FOUND`: Create a profile first.
+  - Refuses `PITCH_NOT_FOUNDER`: Only founders can have a startup pitch.
+  - Refuses `EMPTY_PITCH`: A startup pitch must not be empty.
+- `updateProfile(user: User, name: String, university: String, major: String, graduationYear: Number, skills: Entries, experience: String, interests: Entries, location: String, latitude: Number, longitude: Number, availability: Number) : returns ()`
+  - Refuses `UPDATE_PROFILE_NOT_FOUND`: Create a profile first.
+  - Refuses `INVALID_PROFILE_UPDATE`: Graduation year, coordinates, availability, skills, and interests must be valid.
+  - Refuses `UPDATE_WOULD_UNPUBLISH`: A visible profile must stay complete; hide it before removing required details.
+- `publishProfile(user: User) : returns ()`
+  - Refuses `PUBLISH_PROFILE_NOT_FOUND`: Create a profile first.
+  - Refuses `PROFILE_INCOMPLETE`: Add a name, location, at least one skill and interest, and, for founders, a startup pitch before publishing.
+- `hideProfile(user: User) : returns ()`
+  - Refuses `PROFILE_NOT_VISIBLE`: You do not have a visible profile.
+
+#### Queries
+
+- `_getProfile(user: User) : optional (profile: Profile, role: Role, name: String, university: String, major: String, graduationYear: Number, skills: Entries, experience: String, interests: Entries, location: String, latitude: Number, longitude: Number, availability: Number, startupPitch?: String, visible: Flag)`
+- `_getVisibleProfiles() : many (profile: Profile, owner: User)`
+- `_recommendationData(user: User) : optional (role: Role, visible: Flag, skills: Entries, interests: Entries, university: String, latitude: Number, longitude: Number, availability: Number)`
+- `_visibleCandidates(user: User) : many (candidate: User, skills: Entries, interests: Entries, university: String, latitude: Number, longitude: Number, availability: Number)`
+
+#### Instances
+
+- `ProfileSetting` — instance of `ProfileSetting` — [Application types and instances](../design/types.md), line 21.
+  - `User` is `Authenticating.Account` — [Application types and instances](../design/types.md), line 22.
+
+### Recommending
+
+Defined in [Recommending](../design/concepts/Recommending.md), line 1.
+
+#### Actions
+
+- `setPreferences(user: User, skills: Entries, interests: Entries, universities: Entries, distance?: Number, availability?: Number) : returns ()`
+  - Refuses `INVALID_PREFERENCES`: Preferred distance and availability must be nonnegative, and preferred entries must not be empty.
+- `refreshRecommendation(viewer: User, candidate: User, viewerSkills: Entries, viewerInterests: Entries, viewerUniversity: String, viewerLatitude: Number, viewerLongitude: Number, viewerAvailability: Number, candidateSkills: Entries, candidateInterests: Entries, candidateUniversity: String, candidateLatitude: Number, candidateLongitude: Number, candidateAvailability: Number) : returns (score: Number)`
+  - Refuses `SELF_RECOMMENDATION`: A person cannot be recommended to themselves.
+  - Refuses `INVALID_RECOMMENDATION_DATA`: Recommendation data must have nonempty entries, valid coordinates, and nonnegative availability.
+- `seeLater(viewer: User, candidate: User) : returns ()`
+  - Refuses `NOT_IN_FEED`: This person is not in your current feed.
+- `markPassed(viewer: User, candidate: User) : returns ()`
+  - Refuses `PASS_RECOMMENDATION_NOT_FOUND`: There is no recommendation of this person.
+- `markInterested(viewer: User, candidate: User) : returns ()`
+  - Refuses `INTEREST_RECOMMENDATION_NOT_FOUND`: There is no recommendation of this person.
+  - Refuses `RECOMMENDATION_ALREADY_DECIDED`: You have already decided about this recommendation.
+- `startNewSession(viewer: User) : returns ()`
+- `deactivateRecommendation(viewer: User, candidate: User) : returns ()`
+  - Refuses `DEACTIVATE_RECOMMENDATION_NOT_FOUND`: There is no recommendation of this person.
+
+#### Queries
+
+- `_getFeed(viewer: User) : many (candidate: User, score: Number)`
+- `_getPreferences(user: User) : optional (skills: Entries, interests: Entries, universities: Entries, distance?: Number, availability?: Number)`
+- `_recommendation(viewer: User, candidate: User) : optional (score: Number, status: RecommendationStatus, eligible: Flag)`
+
+#### Instances
+
+- `Recommending` — instance of `Recommending` — [Application types and instances](../design/types.md), line 24.
+  - `User` is `Authenticating.Account` — [Application types and instances](../design/types.md), line 25.
+
 ### Sessioning
 
 Defined in [Sessioning](../design/concepts/Sessioning.md), line 1.
@@ -110,7 +178,7 @@ Defined in [Sessioning](../design/concepts/Sessioning.md), line 1.
 
 ## Computations
 
-- `currentInstant() : DateTime` — [Application types and instances](../design/types.md), line 26.
+- `currentInstant() : DateTime` — [Application types and instances](../design/types.md), line 35.
 - `matchesLink(user: Authenticating.Account) : String` — [Matching](../design/compositions/Matching.md), line 67.
 - `profileLink(user: Authenticating.Account) : String` — [Matching](../design/compositions/Matching.md), line 65.
 - `sessionLifetime() : Number` — [Accounts](../design/compositions/Accounts.md), line 10.
@@ -119,6 +187,16 @@ Defined in [Sessioning](../design/concepts/Sessioning.md), line 1.
 
 _Formers name result shapes evaluated when asked. The source former owns_
 _the authored explanation; this section records the generated shape._
+
+### the feed of (viewer)
+
+```former
+Former "the feed of (viewer)" — inputs (viewer); bindings (candidate, score); promises exactly one record — forms:
+  each Recommending._getFeed (viewer) has (candidate, score)
+    form a record of
+      score
+      user: candidate
+```
 
 ### the matches of (user)
 
@@ -778,6 +856,232 @@ then
   RequestBoundary.respond (notification, requestId)
 ```
 
+### Profiles.Reads.Mine
+
+Authored path: `Profiles.Reads.Mine`.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 90.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 96.
+
+```reaction
+when RequestBoundary.request (path: "/profiles/mine", requestId, session)
+where
+  time is the current flow's instant
+then
+  Sessioning.current (now: time, session)
+```
+
+### Profiles.Reads.Mine:has-profile#2
+
+Authored path: `Profiles.Reads.Mine`.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 90.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 96.
+
+```reaction
+when Sessioning.current (now: time, session, subject: user), asked by Profiles.Reads.Mine
+where
+  ProfileSetting._getProfile (user) has (availability, experience, graduationYear, interests, latitude, location, longitude, major, name, profile, role, skills, university, visible)
+  whether ProfileSetting._getProfile (user) has (startupPitch)
+  earlier, RequestBoundary.request (path: "/profiles/mine", requestId, session)
+then
+  RequestBoundary.respond (availability, experience, graduationYear, interests, latitude, location, longitude, major, name, profile, requestId, role, skills, startupPitch, university, visible)
+```
+
+### Profiles.Reads.Mine:no-profile#2
+
+Authored path: `Profiles.Reads.Mine`.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 90.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 96.
+
+```reaction
+when Sessioning.current (now: time, session, subject: user), asked by Profiles.Reads.Mine
+where
+  no ProfileSetting._getProfile (user)
+  earlier, RequestBoundary.request (path: "/profiles/mine", requestId, session)
+then
+  RequestBoundary.respond (error: "NO_PROFILE", requestId)
+```
+
+### Profiles.Refreshing.RefreshOnPublish
+
+Authored path: `Profiles.Refreshing.RefreshOnPublish`.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 16.
+
+```reaction
+when ProfileSetting.publishProfile (user)
+where
+  ProfileSetting._recommendationData (user) has (availability: userAvailabilityForward, interests: userInterestsForward, latitude: userLatitudeForward, longitude: userLongitudeForward, skills: userSkillsForward, university: userUniversityForward, visible: true)
+  ProfileSetting._visibleCandidates (user) has (availability: candidateAvailabilityForward, candidate: candidateForward, interests: candidateInterestsForward, latitude: candidateLatitudeForward, longitude: candidateLongitudeForward, skills: candidateSkillsForward, university: candidateUniversityForward)
+then
+  Recommending.refreshRecommendation (candidate: candidateForward, candidateAvailability: candidateAvailabilityForward, candidateInterests: candidateInterestsForward, candidateLatitude: candidateLatitudeForward, candidateLongitude: candidateLongitudeForward, candidateSkills: candidateSkillsForward, candidateUniversity: candidateUniversityForward, viewer: user, viewerAvailability: userAvailabilityForward, viewerInterests: userInterestsForward, viewerLatitude: userLatitudeForward, viewerLongitude: userLongitudeForward, viewerSkills: userSkillsForward, viewerUniversity: userUniversityForward)
+```
+
+### Profiles.Refreshing.RefreshOnPublish#2
+
+Authored path: `Profiles.Refreshing.RefreshOnPublish`.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 16.
+
+```reaction
+when Recommending.refreshRecommendation (candidate: candidateForward, candidateAvailability: candidateAvailabilityForward, candidateInterests: candidateInterestsForward, candidateLatitude: candidateLatitudeForward, candidateLongitude: candidateLongitudeForward, candidateSkills: candidateSkillsForward, candidateUniversity: candidateUniversityForward, viewer: user, viewerAvailability: userAvailabilityForward, viewerInterests: userInterestsForward, viewerLatitude: userLatitudeForward, viewerLongitude: userLongitudeForward, viewerSkills: userSkillsForward, viewerUniversity: userUniversityForward), asked by Profiles.Refreshing.RefreshOnPublish
+where
+  ProfileSetting._recommendationData (user) has (availability: userAvailabilityBack, interests: userInterestsBack, latitude: userLatitudeBack, longitude: userLongitudeBack, skills: userSkillsBack, university: userUniversityBack, visible: true)
+  ProfileSetting._visibleCandidates (user) has (availability: candidateAvailabilityBack, candidate: candidateBack, interests: candidateInterestsBack, latitude: candidateLatitudeBack, longitude: candidateLongitudeBack, skills: candidateSkillsBack, university: candidateUniversityBack)
+then
+  Recommending.refreshRecommendation (candidate: user, candidateAvailability: userAvailabilityBack, candidateInterests: userInterestsBack, candidateLatitude: userLatitudeBack, candidateLongitude: userLongitudeBack, candidateSkills: userSkillsBack, candidateUniversity: userUniversityBack, viewer: candidateBack, viewerAvailability: candidateAvailabilityBack, viewerInterests: candidateInterestsBack, viewerLatitude: candidateLatitudeBack, viewerLongitude: candidateLongitudeBack, viewerSkills: candidateSkillsBack, viewerUniversity: candidateUniversityBack)
+```
+
+### Profiles.Requests.Create
+
+Authored path: `Profiles.Requests.Create`.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 52.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 60.
+
+```reaction
+when RequestBoundary.request (availability, experience, graduationYear, interests, latitude, location, longitude, major, name, path: "/profiles/create", requestId, role, session, skills, university)
+where
+  time is the current flow's instant
+then
+  Sessioning.current (now: time, session)
+```
+
+### Profiles.Requests.Create#2
+
+Authored path: `Profiles.Requests.Create`.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 52.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 60.
+
+```reaction
+when Sessioning.current (now: time, session, subject: user), asked by Profiles.Requests.Create
+where
+  earlier, RequestBoundary.request (availability, experience, graduationYear, interests, latitude, location, longitude, major, name, path: "/profiles/create", requestId, role, session, skills, university)
+then
+  ProfileSetting.createProfile (availability, experience, graduationYear, interests, latitude, location, longitude, major, name, role, skills, university, user)
+```
+
+### Profiles.Requests.Create#3
+
+Authored path: `Profiles.Requests.Create`.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 52.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 60.
+
+```reaction
+when ProfileSetting.createProfile (availability, experience, graduationYear, interests, latitude, location, longitude, major, name, role, skills, university, user, profile), asked by Profiles.Requests.Create#2
+where
+  earlier, RequestBoundary.request (availability, experience, graduationYear, interests, latitude, location, longitude, major, name, path: "/profiles/create", requestId, role, session, skills, university)
+then
+  RequestBoundary.respond (profile, requestId)
+```
+
+### Profiles.Requests.Publish
+
+Authored path: `Profiles.Requests.Publish`.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 77.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 85.
+
+```reaction
+when RequestBoundary.request (path: "/profiles/publish", requestId, session)
+where
+  time is the current flow's instant
+then
+  Sessioning.current (now: time, session)
+```
+
+### Profiles.Requests.Publish#2
+
+Authored path: `Profiles.Requests.Publish`.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 77.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 85.
+
+```reaction
+when Sessioning.current (now: time, session, subject: user), asked by Profiles.Requests.Publish
+then
+  ProfileSetting.publishProfile (user)
+```
+
+### Profiles.Requests.Publish#3
+
+Authored path: `Profiles.Requests.Publish`.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 77.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 85.
+
+```reaction
+when ProfileSetting.publishProfile (user), asked by Profiles.Requests.Publish#2
+at the flow's settlement frontier
+where
+  earlier, RequestBoundary.request (path: "/profiles/publish", requestId, session)
+then
+  RequestBoundary.respond (published: true, requestId)
+```
+
+### Profiles.Requests.SetPitch
+
+Authored path: `Profiles.Requests.SetPitch`.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 65.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 72.
+
+```reaction
+when RequestBoundary.request (path: "/profiles/set-pitch", pitch, requestId, session)
+where
+  time is the current flow's instant
+then
+  Sessioning.current (now: time, session)
+```
+
+### Profiles.Requests.SetPitch#2
+
+Authored path: `Profiles.Requests.SetPitch`.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 65.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 72.
+
+```reaction
+when Sessioning.current (now: time, session, subject: user), asked by Profiles.Requests.SetPitch
+where
+  earlier, RequestBoundary.request (path: "/profiles/set-pitch", pitch, requestId, session)
+then
+  ProfileSetting.setStartupPitch (pitch, user)
+```
+
+### Profiles.Requests.SetPitch#3
+
+Authored path: `Profiles.Requests.SetPitch`.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 65.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 72.
+
+```reaction
+when ProfileSetting.setStartupPitch (pitch, user), asked by Profiles.Requests.SetPitch#2
+where
+  earlier, RequestBoundary.request (path: "/profiles/set-pitch", pitch, requestId, session)
+then
+  RequestBoundary.respond (pitchSet: true, requestId)
+```
+
+### Recommendations.Reads.Feed
+
+Authored path: `Recommendations.Reads.Feed`.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 14.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 21.
+
+```reaction
+when RequestBoundary.request (path: "/recommendations/feed", requestId, session)
+where
+  time is the current flow's instant
+then
+  Sessioning.current (now: time, session)
+```
+
+### Recommendations.Reads.Feed#2
+
+Authored path: `Recommendations.Reads.Feed`.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 14.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 21.
+
+```reaction
+when Sessioning.current (now: time, session, subject: user), asked by Recommendations.Reads.Feed
+where
+  earlier, RequestBoundary.request (path: "/recommendations/feed", requestId, session)
+then
+  RequestBoundary.respond (feed: former "the feed of (viewer)" with (viewer: user), requestId)
+```
+
 ## Endpoint input contracts
 
 Before recording an action ask, the boundary rejects a body that is not an
@@ -797,3 +1101,8 @@ not listed here have no explicit input contract.
 - `/notifications/list` — fills `session` with "" when absent
 - `/notifications/mark-read` — requires `notification`; fills `session` with "" when absent
 - `/notifications/unread` — fills `session` with "" when absent
+- `/profiles/create` — requires `role`, `name`, `university`, `major`, `graduationYear`, `skills`, `experience`, `interests`, `location`, `latitude`, `longitude`, `availability`; fills `session` with "" when absent
+- `/profiles/mine` — fills `session` with "" when absent
+- `/profiles/publish` — fills `session` with "" when absent
+- `/profiles/set-pitch` — requires `pitch`; fills `session` with "" when absent
+- `/recommendations/feed` — fills `session` with "" when absent
