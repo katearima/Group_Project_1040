@@ -34,6 +34,19 @@ bun run db:up            # start MongoDB
 bun run dev:backend      # API on http://localhost:8080/api
 bun run dev:frontend     # app on http://localhost:5173 (second terminal)
 ```
+### Test it
+
+```bash
+bun run db:up      # tests need MongoDB
+bun test           # concept, integration and restart tests
+bun run check      # design contracts, generated files, backend and frontend types
+bun run test:save  # re-save the summary to tests/output.txt
+```
+
+## Deploy
+
+The app runs on [mit-sdg.dev](https://mit-sdg.dev/apps) following the [class guide](https://61040.github.io/fa26/resources/deploying-apps/): runtime Bun, package directories `.` and `frontend`, build script `build`, start script `start`, health check `/health`. Add MongoDB in the Settings tab and rename its variable to `MONGODB_URL`. The backend serves the API under `/api` and the built frontend everywhere else.
+Accounts, profiles, matches, recommendations, notifications and chats are saved in MongoDB. Sessions are not, so a redeploy signs everyone out.
 
 `bun run preview` builds the frontend and serves everything from the backend on http://localhost:3000, the way the deployed app runs.
 
@@ -43,21 +56,6 @@ bun run dev:frontend     # app on http://localhost:5173 (second terminal)
 | `PORT` | Port the server listens on | `8080` |
 | `HOST` | Interface the server binds to | `localhost` |
 
-## Deploy
-
-The app runs on [mit-sdg.dev](https://mit-sdg.dev/apps) following the [class guide](https://61040.github.io/fa26/resources/deploying-apps/): runtime Bun, package directories `.` and `frontend`, build script `build`, start script `start`, health check `/health`. Add MongoDB in the Settings tab and rename its variable to `MONGODB_URL`. The backend serves the API under `/api` and the built frontend everywhere else.
-
-Accounts, profiles, matches, recommendations, notifications and chats are saved in MongoDB. Sessions are not, so a redeploy signs everyone out.
-
-## Test it
-
-```bash
-bun run db:up      # tests need MongoDB
-bun test           # concept, integration and restart tests
-bun run check      # design contracts, generated files, backend and frontend types
-bun run test:save  # re-save the summary to tests/output.txt
-```
-
-## Not built yet
+## TODOs/Not built yet
 
 Viewing other people's full profiles, See Later, hiding and republishing a profile, and the guard that limits interest to visible, complementary profiles. They are listed with reasons in [`CLAUDE.md`](CLAUDE.md).
