@@ -20,7 +20,7 @@ bun run preview          # build, then serve the whole app on :3000 the way the 
 ```
 
 Run `bun install` in `frontend/` too. `bun run check` also type-checks the frontend
-(`vue-tsc`). `bun run up` still references `scripts/check-api.ts`, which does not exist yet.
+(`vue-tsc`). The platform ignores `compose.yaml`; it only provides local MongoDB (`bun run db:up`).
 
 ## Layout
 
@@ -42,7 +42,10 @@ Run `bun install` in `frontend/` too. `bun run check` also type-checks the front
   the typed sync-engine HTTP client over `generated/wire.ts` (`AppWireHttp`), calling
   `/api/...` on the page's own origin; the dev server forwards `/api` to :8080 unchanged.
   `src/styles/tokens.css` holds the palette and fonts from `documentation/colors.png` and
-  `typograhy.png`.
+  `typography.png`. Pages are in `src/views/` (Auth, Discover, Matches, Messages, Profile),
+  shared pieces in `src/components/`, and state in `src/state/` (session in `localStorage`,
+  hash navigation, polling, toasts). `src/api/errors.ts` maps each endpoint's HTTP error
+  category to a sentence. There is no router dependency; lists refresh by polling.
 - `.sync-engine/work/<slug>/`: sync-engine skill work items (brief, prompts, run records).
 
 ## Status (as of 2026-11-23)
@@ -84,11 +87,17 @@ Not yet implemented (deliberately documented as deferred in `design/compositions
 - `/profiles/hide` and Reaction 3; viewing other people's profiles; See Later and Begin
   Browsing endpoints.
 - Reactions 4 and 5.
-- Persistence for everything except Chatting: those concepts are in memory and lose state on
-  restart. Chatting stores `chatting.conversations` and `chatting.messages` in MongoDB via
-  `src/db.ts`; `assembleApplication({ database })` overrides the database.
+- Persistence of sessions (deliberately not kept: a restart signs everyone out).
 
 ## Conventions and decisions
+
+- **Persistence.** Chatting stores its rows in MongoDB itself (`src/concepts/Chatting.ts`).
+  Authenticating, ProfileSetting, MutualMatching, Notifying and Recommending keep their logic
+  in memory and take an optional `persistence` (`src/persistence.ts`): after each change they
+  save a snapshot of their whole state to one document in the `state` collection, and
+  `openStores()` in `src/assembly.ts` loads it at startup (`src/main.ts` also flushes on
+  SIGTERM). Without it (unit tests) they stay in memory. Writes are queued, so a crash can lose the
+  last moments; fine at this scale, not for a large user base. Sessions are never saved.
 
 - **Change design before code.** New behavior goes into `design/` first, then
   `bunx --no-install sync-engine check-design design/concepts/*.md design/types.md design/compositions/*.md`,

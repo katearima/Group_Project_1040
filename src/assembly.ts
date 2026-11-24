@@ -3,20 +3,72 @@ import { httpPolicy } from "@mit-sdg/sync-engine-http/policy";
 import type { Db } from "mongodb";
 import { composition } from "./composition.ts";
 import { applicationConceptSet } from "./concepts.ts";
+import { AuthenticatingMemoryConcept } from "./concepts/catalog/authenticating/authenticating.memory.ts";
 import { ChattingConcept } from "./concepts/Chatting.ts";
+import { MutualMatchingConcept } from "./concepts/MutualMatching.ts";
+import { NotifyingConcept } from "./concepts/Notifying.ts";
+import { ProfileSettingConcept } from "./concepts/ProfileSetting.ts";
+import { RecommendingConcept } from "./concepts/Recommending.ts";
 import { db } from "./db.ts";
+import { openPersistence } from "./persistence.ts";
+
+type SavedAs<C extends new (...args: never[]) => unknown> = NonNullable<
+  NonNullable<ConstructorParameters<C>[0]>["persistence"]
+>;
+type Saved<C extends new (...args: never[]) => unknown> =
+  SavedAs<C> extends { save(state: infer S): void } ? S : never;
+
+/** The saved state of the concepts that survive a restart. Sessions are not kept: a restart signs everyone out. */
+export interface AppStores {
+  Authenticating?: SavedAs<typeof AuthenticatingMemoryConcept>;
+  ProfileSetting?: SavedAs<typeof ProfileSettingConcept>;
+  MutualMatching?: SavedAs<typeof MutualMatchingConcept>;
+  Notifying?: SavedAs<typeof NotifyingConcept>;
+  Recommending?: SavedAs<typeof RecommendingConcept>;
+}
+
+/** Loads each concept's saved state from MongoDB. Call `flush` before the process exits. */
+export async function openStores(database: Db = db): Promise<{ stores: AppStores; flush: () => Promise<void> }> {
+  const opened = {
+    Authenticating: await openPersistence<Saved<typeof AuthenticatingMemoryConcept>>(database, "Authenticating"),
+    ProfileSetting: await openPersistence<Saved<typeof ProfileSettingConcept>>(database, "ProfileSetting"),
+    MutualMatching: await openPersistence<Saved<typeof MutualMatchingConcept>>(database, "MutualMatching"),
+    Notifying: await openPersistence<Saved<typeof NotifyingConcept>>(database, "Notifying"),
+    Recommending: await openPersistence<Saved<typeof RecommendingConcept>>(database, "Recommending"),
+  } satisfies Required<AppStores>;
+  return {
+    stores: opened,
+    flush: async () => {
+      await Promise.all(Object.values(opened).map((each) => each.flush()));
+    },
+  };
+}
 
 /**
  * Assembles the application. Chatting is stored in MongoDB: `database` defaults to the
- * project database in `src/db.ts`, and tests pass a fresh one. Every other concept is
- * still in memory and starts empty.
+ * project database in `src/db.ts`, and tests pass a fresh one. The other stateful concepts
+ * keep their state in memory and save a snapshot through `stores` (see `openStores`);
+ * without `stores` they start empty and forget everything on restart. Sessions are never saved.
  */
-export function assembleApplication({ database = db }: { database?: Db } = {}) {
+export function assembleApplication({ database = db, stores = {} }: { database?: Db; stores?: AppStores } = {}) {
   return assemble({
     conceptSet: applicationConceptSet,
     instances: {
       ...applicationConceptSet.implementations(),
       Chatting: new ChattingConcept(database),
+      ...(stores.Authenticating && {
+        Authenticating: new AuthenticatingMemoryConcept({ persistence: stores.Authenticating }),
+      }),
+      ...(stores.ProfileSetting && {
+        ProfileSetting: new ProfileSettingConcept({ persistence: stores.ProfileSetting }),
+      }),
+      ...(stores.MutualMatching && {
+        MutualMatching: new MutualMatchingConcept({ persistence: stores.MutualMatching }),
+      }),
+      ...(stores.Notifying && { Notifying: new NotifyingConcept({ persistence: stores.Notifying }) }),
+      ...(stores.Recommending && {
+        Recommending: new RecommendingConcept({ persistence: stores.Recommending }),
+      }),
     },
     composition,
   });

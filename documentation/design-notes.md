@@ -2,7 +2,7 @@
 
 We explored different typography and color options for our app. We want the design to look **professional but also visually interesting**. Since our app is about connecting people who might end up building a startup together, we want it to feel trustworthy and serious, but not boring. We also want profiles and startup pitches to be easy to read and engaging enough that users would want to explore them.
 
-![Typography study](topography.png)
+![Typography study](typography.png)
 
 ![Color study](colors.png)
 

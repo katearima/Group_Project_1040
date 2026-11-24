@@ -1,3 +1,5 @@
+import { type Persistence, plain } from "../persistence.ts";
+
 export type User = string;
 export type Entries = string[];
 export type RecommendationStatus = "AVAILABLE" | "SEE_LATER" | "PASSED" | "INTERESTED";
@@ -193,6 +195,8 @@ function pairKey(viewer: User, candidate: User): string {
 export interface RecommendingInitialState {
   preferences?: Iterable<PreferencesRow>;
   recommendations?: Iterable<RecommendationRow>;
+  /** Keeps preferences and recommendations across restarts; its saved state replaces the two lists above. */
+  persistence?: Persistence<{ preferences: PreferencesRow[]; recommendations: RecommendationRow[] }>;
 }
 
 export interface RefreshInput {
@@ -218,7 +222,14 @@ export class RecommendingConcept {
   #recommendations: RecommendationRow[] = [];
   #byPair = new Map<string, RecommendationRow>();
 
-  constructor({ preferences = [], recommendations = [] }: RecommendingInitialState = {}) {
+  readonly #persistence:
+    | Persistence<{ preferences: PreferencesRow[]; recommendations: RecommendationRow[] }>
+    | undefined;
+
+  constructor({ preferences = [], recommendations = [], persistence }: RecommendingInitialState = {}) {
+    this.#persistence = persistence;
+    preferences = persistence?.initial?.preferences ?? preferences;
+    recommendations = persistence?.initial?.recommendations ?? recommendations;
     for (const row of preferences) this.#preferences.set(row.owner, { ...row });
     for (const row of recommendations) {
       const copy = { ...row };
@@ -262,6 +273,7 @@ export class RecommendingConcept {
     if (supplied(distance)) row.preferredDistance = distance;
     if (supplied(availability)) row.preferredAvailability = availability;
     this.#preferences.set(user, row);
+    this.#changed();
     return {};
   }
 
@@ -309,6 +321,7 @@ export class RecommendingConcept {
       existing.score = value;
       existing.eligible = true;
     }
+    this.#changed();
     return { score: value };
   }
 
@@ -318,6 +331,7 @@ export class RecommendingConcept {
       throw new NotInFeed(NOT_IN_FEED_DETAIL);
     }
     row.status = "SEE_LATER";
+    this.#changed();
     return {};
   }
 
@@ -325,6 +339,7 @@ export class RecommendingConcept {
     const row = this.#byPair.get(pairKey(viewer, candidate));
     if (row === undefined) throw new PassRecommendationNotFound(PASS_RECOMMENDATION_NOT_FOUND_DETAIL);
     row.status = "PASSED";
+    this.#changed();
     return {};
   }
 
@@ -337,6 +352,7 @@ export class RecommendingConcept {
       throw new RecommendationAlreadyDecided(RECOMMENDATION_ALREADY_DECIDED_DETAIL);
     }
     row.status = "INTERESTED";
+    this.#changed();
     return {};
   }
 
@@ -344,6 +360,7 @@ export class RecommendingConcept {
     for (const row of this.#recommendations) {
       if (row.viewer === viewer && row.status === "SEE_LATER") row.status = "AVAILABLE";
     }
+    this.#changed();
     return {};
   }
 
@@ -359,7 +376,15 @@ export class RecommendingConcept {
       throw new DeactivateRecommendationNotFound(DEACTIVATE_RECOMMENDATION_NOT_FOUND_DETAIL);
     }
     row.eligible = false;
+    this.#changed();
     return {};
+  }
+
+  #changed(): void {
+    this.#persistence?.save({
+      preferences: plain(this.#preferences.values()),
+      recommendations: plain(this.#recommendations),
+    });
   }
 
   _getFeed({ viewer }: { viewer: User }): Array<{ candidate: User; score: number }> {

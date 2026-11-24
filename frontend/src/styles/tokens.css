@@ -1,7 +1,7 @@
 /*
  * Design tokens. Colors come from the team's palette boards in documentation/colors.png
  * (vibrant blue, warm yellow, orange-red, lavender, deep green on off-white); fonts follow
- * documentation/typograhy.png (a bold condensed display face with a plain sans for text).
+ * documentation/typography.png (a bold condensed display face with a plain sans for text).
  */
 :root {
   --color-bg: #faf8f2;

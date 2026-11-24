@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { type Persistence, plain } from "../persistence.ts";
 
 export type User = string;
 export type Profile = string;
@@ -184,6 +185,8 @@ export interface ProfileSettingDependencies {
   /** Source of fresh opaque Profile identities. */
   freshProfile?: () => Profile;
   initial?: Iterable<ProfileRow>;
+  /** Keeps the profiles across restarts; its saved state replaces `initial`. */
+  persistence?: Persistence<{ profiles: ProfileRow[] }>;
 }
 
 export class ProfileSettingConcept {
@@ -192,9 +195,12 @@ export class ProfileSettingConcept {
   #profiles: ProfileRow[] = [];
   #byOwner = new Map<User, ProfileRow>();
 
-  constructor({ freshProfile = randomUUID, initial = [] }: ProfileSettingDependencies = {}) {
+  readonly #persistence: Persistence<{ profiles: ProfileRow[] }> | undefined;
+
+  constructor({ freshProfile = randomUUID, initial = [], persistence }: ProfileSettingDependencies = {}) {
     this.#freshProfile = freshProfile;
-    for (const row of initial) {
+    this.#persistence = persistence;
+    for (const row of persistence?.initial?.profiles ?? initial) {
       const copy: ProfileRow = { ...row, skills: [...row.skills], interests: [...row.interests] };
       this.#profiles.push(copy);
       this.#byOwner.set(copy.owner, copy);
@@ -219,6 +225,7 @@ export class ProfileSettingConcept {
     };
     this.#profiles.push(row);
     this.#byOwner.set(row.owner, row);
+    this.#changed();
     return { profile: row.profile };
   }
 
@@ -228,6 +235,7 @@ export class ProfileSettingConcept {
     if (!isFounder(row.role)) throw new PitchNotFounder(PITCH_NOT_FOUNDER_DETAIL);
     if (typeof pitch !== "string" || isBlank(pitch)) throw new EmptyPitch(EMPTY_PITCH_DETAIL);
     row.startupPitch = pitch;
+    this.#changed();
     return {};
   }
 
@@ -240,6 +248,7 @@ export class ProfileSettingConcept {
       throw new UpdateWouldUnpublish(UPDATE_WOULD_UNPUBLISH_DETAIL);
     }
     Object.assign(row, fields);
+    this.#changed();
     return {};
   }
 
@@ -248,6 +257,7 @@ export class ProfileSettingConcept {
     if (row === undefined) throw new PublishProfileNotFound(PUBLISH_PROFILE_NOT_FOUND_DETAIL);
     if (!complete(row)) throw new ProfileIncomplete(PROFILE_INCOMPLETE_DETAIL);
     row.visible = true;
+    this.#changed();
     return {};
   }
 
@@ -255,7 +265,12 @@ export class ProfileSettingConcept {
     const row = this.#byOwner.get(user);
     if (row === undefined || !row.visible) throw new ProfileNotVisible(PROFILE_NOT_VISIBLE_DETAIL);
     row.visible = false;
+    this.#changed();
     return {};
+  }
+
+  #changed(): void {
+    this.#persistence?.save({ profiles: plain(this.#profiles) });
   }
 
   _getProfile({ user }: { user: User }): GetProfileRow[] {

@@ -1,35 +1,63 @@
-# Group_Project_1040
-Team project
+# Startup Matchmaker
 
+Meet the founders and builders you'd want to start something with. Founders find teammates who can ship their idea, builders find a startup worth joining, and people across MIT, Harvard, BU and Tufts are ranked by skills, interests, availability, university and distance. When both sides show interest it's a match, and a private chat opens.
 
-https://docs.google.com/spreadsheets/d/1XkOPBRA-6CLnmeJ0T4gd80OykMGjANjbTzZeELhs754/edit?usp=sharing
+6.1040 Software Design, Fall 2026. Team: Fidan Huseynova, Ketevan Peranidze, Silk Yu, Raleigh Berman.
 
-## Running locally
+## What you can do
 
-Requires [Bun](https://bun.sh) 1.4.5 and Podman (for MongoDB).
+- **Sign up and build a profile** as a founder, builder or both, then publish it.
+- **Set preferences** (skills, interests, universities, distance, hours) that shape your feed.
+- **Discover** a ranked feed with a match percentage, and show interest.
+- **Match**: respond to people who are interested in you, then message your matches or unmatch.
+- **Get notified** about interest, matches and messages, with no page refreshes.
+
+## Read more
+
+- [Concept design](documentation/concept-design.md): the five concepts and how they work together
+- [Concept contracts](design/concepts/) checked by the framework, and the [reactions](design/compositions/) that connect them
+- [Design notes](documentation/design-notes.md): visual study and decisions
+- [Development plan](documentation/development-plan.md)
+- [Problem framing](documentation/problem-framing/README.md), including the ethical analysis
+- [Test results](tests/output.txt) and [what the tests cover](tests/README.md)
+- [`.sync-engine/work/`](.sync-engine/work/): briefs, prompts and run records for the agent-assisted changes
+
+## Run it locally
+
+Needs [Bun](https://bun.sh) 1.4.5 and Podman (for MongoDB).
 
 ```bash
 bun install
 (cd frontend && bun install)
-cp .env.example .env     # MONGODB_URL for the local database
+cp .env.example .env     # local MongoDB connection
 bun run db:up            # start MongoDB
 bun run dev:backend      # API on http://localhost:8080/api
-bun run dev:frontend     # app on http://localhost:5173 (in a second terminal)
+bun run dev:frontend     # app on http://localhost:5173 (second terminal)
 ```
 
-`bun test` runs the backend tests (MongoDB must be running), and `bun run check` checks the
-design, the generated artifacts, and both TypeScript projects. `bun run preview` builds the
-frontend and serves the whole app from the backend on http://localhost:3000, as in deployment.
+`bun run preview` builds the frontend and serves everything from the backend on http://localhost:3000, the way the deployed app runs.
 
-## Deploying
+| Variable | Meaning | Default |
+| --- | --- | --- |
+| `MONGODB_URL` | MongoDB connection string (required) | none; see `.env.example` |
+| `PORT` | Port the server listens on | `8080` |
+| `HOST` | Interface the server binds to | `localhost` |
 
-The app is deployed on [mit-sdg.dev](https://mit-sdg.dev/apps) following the
-[class guide](https://61040.github.io/fa26/resources/deploying-apps/). Settings: runtime Bun,
-package directories `.` and `frontend`, build script `build`, start script `start`, health
-check path `/health`. Add MongoDB in the Settings tab and rename its variable to
-`MONGODB_URL`. The backend serves the API under `/api` and the built frontend for every
-other path.
+## Deploy
 
-## Assignments
+The app runs on [mit-sdg.dev](https://mit-sdg.dev/apps) following the [class guide](https://61040.github.io/fa26/resources/deploying-apps/): runtime Bun, package directories `.` and `frontend`, build script `build`, start script `start`, health check `/health`. Add MongoDB in the Settings tab and rename its variable to `MONGODB_URL`. The backend serves the API under `/api` and the built frontend everywhere else.
 
-- [F2: Problem Framing](problem-framing/README.md)
+Accounts, profiles, matches, recommendations, notifications and chats are saved in MongoDB. Sessions are not, so a redeploy signs everyone out.
+
+## Test it
+
+```bash
+bun run db:up      # tests need MongoDB
+bun test           # concept, integration and restart tests
+bun run check      # design contracts, generated files, backend and frontend types
+bun run test:save  # re-save the summary to tests/output.txt
+```
+
+## Not built yet
+
+Viewing other people's full profiles, See Later, hiding and republishing a profile, and the guard that limits interest to visible, complementary profiles. They are listed with reasons in [`CLAUDE.md`](CLAUDE.md).
