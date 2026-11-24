@@ -106,6 +106,13 @@ describe("setStartupPitch", () => {
     expect(c._getProfile({ user: "bumba" })[0]!.startupPitch).toBe("A data tool");
   });
 
+  test("sets the pitch of a profile that is both founder and builder", () => {
+    const c = fresh();
+    create(c, "bumba", "BOTH");
+    expect(c.setStartupPitch({ user: "bumba", pitch: "A data tool" })).toEqual({});
+    expect(c._getProfile({ user: "bumba" })[0]!.startupPitch).toBe("A data tool");
+  });
+
   test("refuses missing profile, builders, and empty pitches", () => {
     const c = fresh();
     expect(() => c.setStartupPitch({ user: "nobody", pitch: "x" })).toThrow(PitchProfileNotFound);
@@ -132,6 +139,15 @@ describe("publishProfile and hideProfile", () => {
     create(c, "bumba", "FOUNDER");
     expect(() => c.publishProfile({ user: "bumba" })).toThrow(ProfileIncomplete);
     expect(c._getProfile({ user: "bumba" })[0]!.visible).toBe(false);
+    c.setStartupPitch({ user: "bumba", pitch: "Travel app" });
+    c.publishProfile({ user: "bumba" });
+    expect(c._getProfile({ user: "bumba" })[0]!.visible).toBe(true);
+  });
+
+  test("refuses a BOTH profile without a pitch, then publishes after the pitch", () => {
+    const c = fresh();
+    create(c, "bumba", "BOTH");
+    expect(() => c.publishProfile({ user: "bumba" })).toThrow(ProfileIncomplete);
     c.setStartupPitch({ user: "bumba", pitch: "Travel app" });
     c.publishProfile({ user: "bumba" });
     expect(c._getProfile({ user: "bumba" })[0]!.visible).toBe(true);
@@ -254,5 +270,28 @@ describe("reads", () => {
       longitude: -71.09,
       availability: 10,
     });
+  });
+});
+
+describe("_visibleCandidates with BOTH", () => {
+  /** Publishes a profile with the given role, setting a pitch when one is needed. */
+  function publish(c: ProfileSettingConcept, user: string, role: Role) {
+    create(c, user, role);
+    if (role !== "BUILDER") c.setStartupPitch({ user, pitch: "Pitch" });
+    c.publishProfile({ user });
+  }
+
+  test("pairs BOTH with every role, never itself, and keeps same-role pairs apart", () => {
+    const c = fresh();
+    publish(c, "keti", "BUILDER");
+    publish(c, "bumba", "FOUNDER");
+    publish(c, "ana", "BOTH");
+    publish(c, "dato", "BOTH");
+    publish(c, "eka", "BUILDER");
+    const candidates = (user: string) =>
+      c._visibleCandidates({ user }).map((row) => row.candidate);
+    expect(candidates("ana")).toEqual(["keti", "bumba", "dato", "eka"]);
+    expect(candidates("keti")).toEqual(["bumba", "ana", "dato"]);
+    expect(candidates("bumba")).toEqual(["keti", "ana", "dato", "eka"]);
   });
 });

@@ -13,7 +13,7 @@ or matches.
 
 Deferred integrations:
 
-- ProfileSetting: require visible profiles with opposite roles for Show Interest and
+- ProfileSetting: require visible profiles with complementary roles for Show Interest and
   supply the sender's name for interest notifications.
 - Recommending: update feeds after interest or a pass (Reactions 4 and 5), allow passing
   from recommendations, and mark recommendations passed after unmatching (Reaction 10).

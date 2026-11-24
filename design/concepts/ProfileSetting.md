@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Let each person present one profile, as a founder or as a builder, that others can
+Let each person present one profile, as a founder, as a builder, or as both, that others can
 discover once it is complete and published. A profile is a self-description that its owner
 controls, not a record that other people edit, rate, or annotate.
 
@@ -49,7 +49,8 @@ a seq of Profiles with
   a visible Flag
 
 Rule: A User has at most one Profile, and its role never changes after creation.
-Rule: If a Profile whose role is FOUNDER or BOTH, startupPitch is nonempty.
+Rule: Only a Profile whose role is FOUNDER or BOTH has a startupPitch, and a present startupPitch is nonempty.
+Rule: Two roles are complementary when one of them is FOUNDER or BOTH and the other is BUILDER or BOTH; FOUNDER with FOUNDER and BUILDER with BUILDER are not complementary.
 Rule: graduationYear is a positive whole number; availability, in hours per week, is a nonnegative number.
 Rule: latitude is between -90 and 90 and longitude is between -180 and 180, inclusive, in degrees, even while the Profile is hidden.
 Rule: Every skills and interests entry is nonempty after trimming leading and trailing whitespace; entries are stored exactly as supplied, without trimming or removing duplicates.
@@ -147,7 +148,7 @@ _recommendationData (user: User) : optional (role: Role, visible: Flag, skills: 
   answers no row when user has no Profile, including for an unknown user
 
 _visibleCandidates (user: User) : many (candidate: User, skills: Entries, interests: Entries, university: String, latitude: Number, longitude: Number, availability: Number)
-  answers the owner and recommendation data of each visible Profile whose role differs from the role of user's Profile
+  answers the owner and recommendation data of each visible Profile, other than user's own, whose role is complementary to the role of user's Profile
   answers no rows when user has no Profile, including for an unknown user, or when no such Profile is visible
   orders rows by Profile creation order, oldest first
 ```

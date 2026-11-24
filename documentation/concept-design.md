@@ -8,11 +8,11 @@ To help people present their skills, interests, and what they are looking for, s
 
 ### Operational Principle
 
-When someone joins the platform, they create a profile and choose whether they are a founder looking for teammates or a student looking to join a startup. A user can only choose one role.
+When someone joins the platform, they create a profile and choose whether they are a founder looking for teammates, a builder looking to join a startup, or both. A user who chooses both is shown to founders and builders alike.
 
 Both founders and builders enter their name, university, major, graduation year, skills, experience, interests, location, and availability.
 
-Founders also describe their startup idea and what kind of teammates they need.
+Founders, including users who are both, also describe their startup idea and what kind of teammates they need.
 
 Both sides can also enter their matching preferences during the same setup process. These preferences belong to Recommending, which uses them to decide which people to show first.
 
@@ -28,7 +28,7 @@ Both can update their profiles as their interests change. They can publish their
 concept ProfileSetting [User]
 
 types
-  Role is FOUNDER or BUILDER
+  Role is FOUNDER or BUILDER or BOTH
 
 state
   a set of Profiles with
@@ -48,8 +48,8 @@ state
     a visible Flag
 
   Rule: A user has at most one profile.
-  Rule: A user can have only one role.
-  Rule: Only founders can have startup pitches.
+  Rule: A user has exactly one role, which never changes; BOTH means founder and builder at once.
+  Rule: Only profiles with role FOUNDER or BOTH can have startup pitches.
   Rule: Availability cannot be negative.
   Rule: Graduation year is a positive whole number.
   Rule: Latitude is between -90 and 90 and longitude is between -180 and 180.
@@ -60,7 +60,9 @@ The user's name will be in the form \[First] \[Last initial]. We deliberately ob
 
 The location is a named place, such as a campus or neighborhood, with latitude and longitude in degrees. It does not need to be a home address. Coordinates must be valid even while a profile is hidden. Coordiates are not shared publicly for security but used on the backend to determine proximity.
 
-For a profile to be published, its name and location must contain nonempty text, and its skills and interests must each contain at least one nonempty entry. Users will be highly recommended to include university, major, and graduation year information. Experience can be empty. Founders must also have a nonempty startup pitch.
+For a profile to be published, its name and location must contain nonempty text, and its skills and interests must each contain at least one nonempty entry. Users will be highly recommended to include university, major, and graduation year information. Experience can be empty. Profiles with role FOUNDER or BOTH must also have a nonempty startup pitch.
+
+Two roles are complementary when one of them is FOUNDER or BOTH and the other is BUILDER or BOTH. Two founders, or two builders, are never complementary; a BOTH profile is complementary to every role, including another BOTH.
 
 Here and below, text containing only spaces counts as empty. Skill and interest entries cannot be empty. Draft profiles can have empty text fields or empty sets until they are ready to be published.
 
@@ -97,7 +99,7 @@ createProfile(
 
 ```text
 setStartupPitch(user: User, pitch: String)
-  where user has a profile with role FOUNDER
+  where user has a profile with role FOUNDER or BOTH
   and pitch is nonempty
   then
     set startupPitch to pitch
@@ -228,7 +230,7 @@ For the initial version, each of the five factors gets a score between 0 and 1. 
 
 Distance is the shortest distance between the two coordinates along the Earth's surface, in kilometers, without following roads or transit routes. Use the great-circle distance on a sphere with radius 6,371 kilometers. Two locations with the same coordinates have distance zero, even if their names differ.
 
-For example, if the five factor scores are 1, 0.5, 1, 1, and 0.5, the final score is 0.8. A preference affects ranking, not whether a visible person with the opposite role can appear at all. Scores in the two directions can differ because the users may have different preferences.
+For example, if the five factor scores are 1, 0.5, 1, 1, and 0.5, the final score is 0.8. A preference affects ranking, not whether a visible person with a complementary role can appear at all. Scores in the two directions can differ because the users may have different preferences.
 
 ### Actions
 
@@ -706,7 +708,7 @@ Only the requests listed below are available to users. Recommendation refreshes,
 when Requesting.showInterest(user, other)
 
 where ProfileSetting:
-  user and other have visible profiles with opposite roles
+  user and other have visible profiles with complementary roles
 and MutualMatching:
   user and other are different and are not already matched
   user has not already made a decision about other
@@ -737,13 +739,13 @@ Queries that return a Profile, Preference, Conversation, Message, or Notificatio
 
 ## Reaction 1: Creating Recommendations
 
-When someone publishes their profile, the platform generates recommendations between that user and other visible users with the opposite role.
+When someone publishes their profile, the platform generates recommendations between that user and other visible users with a complementary role.
 
 ```text
 when ProfileSetting.publishProfile(user)
 
 where ProfileSetting:
-  user and candidate have visible profiles with opposite roles
+  user and candidate have visible profiles with complementary roles
   userData and candidateData contain their skills, interests,
     university, latitude, and longitude
 
@@ -769,7 +771,7 @@ When someone changes their profile or preferences, their recommendations are rec
 when Recommending.setPreferences(user, ...)
 
 where ProfileSetting:
-  user and candidate have visible profiles with opposite roles
+  user and candidate have visible profiles with complementary roles
   userData and candidateData contain their skills, interests,
     university, latitude, and longitude
 

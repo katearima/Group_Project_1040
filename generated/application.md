@@ -860,8 +860,8 @@ then
 ### Profiles.Reads.Mine
 
 Authored path: `Profiles.Reads.Mine`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 108.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 114.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 110.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 116.
 
 ```reaction
 when RequestBoundary.request (path: "/profiles/mine", requestId, session)
@@ -874,8 +874,8 @@ then
 ### Profiles.Reads.Mine:has-profile#2
 
 Authored path: `Profiles.Reads.Mine`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 108.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 114.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 110.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 116.
 
 ```reaction
 when Sessioning.current (now: time, session, subject: user), asked by Profiles.Reads.Mine
@@ -890,8 +890,8 @@ then
 ### Profiles.Reads.Mine:no-profile#2
 
 Authored path: `Profiles.Reads.Mine`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 108.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 114.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 110.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 116.
 
 ```reaction
 when Sessioning.current (now: time, session, subject: user), asked by Profiles.Reads.Mine
@@ -989,8 +989,8 @@ then
 ### Profiles.Requests.Create
 
 Authored path: `Profiles.Requests.Create`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 57.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 65.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 59.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 67.
 
 ```reaction
 when RequestBoundary.request (availability, experience, graduationYear, interests, latitude, location, longitude, major, name, path: "/profiles/create", requestId, role, session, skills, university)
@@ -1003,8 +1003,8 @@ then
 ### Profiles.Requests.Create#2
 
 Authored path: `Profiles.Requests.Create`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 57.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 65.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 59.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 67.
 
 ```reaction
 when Sessioning.current (now: time, session, subject: user), asked by Profiles.Requests.Create
@@ -1017,8 +1017,8 @@ then
 ### Profiles.Requests.Create#3
 
 Authored path: `Profiles.Requests.Create`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 57.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 65.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 59.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 67.
 
 ```reaction
 when ProfileSetting.createProfile (availability, experience, graduationYear, interests, latitude, location, longitude, major, name, role, skills, university, user, profile), asked by Profiles.Requests.Create#2
@@ -1031,8 +1031,8 @@ then
 ### Profiles.Requests.Publish
 
 Authored path: `Profiles.Requests.Publish`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 95.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 103.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 97.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 105.
 
 ```reaction
 when RequestBoundary.request (path: "/profiles/publish", requestId, session)
@@ -1045,8 +1045,8 @@ then
 ### Profiles.Requests.Publish#2
 
 Authored path: `Profiles.Requests.Publish`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 95.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 103.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 97.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 105.
 
 ```reaction
 when Sessioning.current (now: time, session, subject: user), asked by Profiles.Requests.Publish
@@ -1057,8 +1057,8 @@ then
 ### Profiles.Requests.Publish#3
 
 Authored path: `Profiles.Requests.Publish`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 95.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 103.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 97.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 105.
 
 ```reaction
 when ProfileSetting.publishProfile (user), asked by Profiles.Requests.Publish#2
@@ -1072,8 +1072,8 @@ then
 ### Profiles.Requests.SetPitch
 
 Authored path: `Profiles.Requests.SetPitch`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 83.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 90.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 85.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 92.
 
 ```reaction
 when RequestBoundary.request (path: "/profiles/set-pitch", pitch, requestId, session)
@@ -1086,8 +1086,8 @@ then
 ### Profiles.Requests.SetPitch#2
 
 Authored path: `Profiles.Requests.SetPitch`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 83.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 90.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 85.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 92.
 
 ```reaction
 when Sessioning.current (now: time, session, subject: user), asked by Profiles.Requests.SetPitch
@@ -1100,8 +1100,8 @@ then
 ### Profiles.Requests.SetPitch#3
 
 Authored path: `Profiles.Requests.SetPitch`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 83.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 90.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 85.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 92.
 
 ```reaction
 when ProfileSetting.setStartupPitch (pitch, user), asked by Profiles.Requests.SetPitch#2
@@ -1115,8 +1115,8 @@ then
 ### Profiles.Requests.Update
 
 Authored path: `Profiles.Requests.Update`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 70.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 78.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 72.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 80.
 
 ```reaction
 when RequestBoundary.request (availability, experience, graduationYear, interests, latitude, location, longitude, major, name, path: "/profiles/update", requestId, session, skills, university)
@@ -1129,8 +1129,8 @@ then
 ### Profiles.Requests.Update#2
 
 Authored path: `Profiles.Requests.Update`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 70.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 78.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 72.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 80.
 
 ```reaction
 when Sessioning.current (now: time, session, subject: user), asked by Profiles.Requests.Update
@@ -1143,8 +1143,8 @@ then
 ### Profiles.Requests.Update#3
 
 Authored path: `Profiles.Requests.Update`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 70.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 78.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 72.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 80.
 
 ```reaction
 when ProfileSetting.updateProfile (availability, experience, graduationYear, interests, latitude, location, longitude, major, name, skills, university, user), asked by Profiles.Requests.Update#2

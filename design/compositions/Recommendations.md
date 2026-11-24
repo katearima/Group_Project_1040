@@ -30,7 +30,7 @@ After the preferences are saved, a successful Recommending `setPreferences`
 (Reaction 2) as an internal reaction. It reads ProfileSetting `_recommendationData` again,
 rather than reusing the guard read, and only when that fresh read shows the profile visible
 does it run the recommendation refresh described in Profiles: both directions for every
-visible candidate with the opposite role, so the new preferences change the user's scores
+visible candidate with a complementary role, so the new preferences change the user's scores
 for others and others' scores for the user (through the skills factor). A hidden profile
 refreshes nothing until it is published. The endpoint answers success only after its flow
 settles, after every refresh has completed; that answer is disjoint from

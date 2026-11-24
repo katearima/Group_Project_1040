@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 
 export type User = string;
 export type Profile = string;
-export type Role = "FOUNDER" | "BUILDER";
+export type Role = "FOUNDER" | "BUILDER" | "BOTH";
 export type Entries = string[];
 
 export interface ProfileRow {
@@ -101,6 +101,22 @@ export class ProfileIncomplete extends Error {}
 /** Refusal PROFILE_NOT_VISIBLE. */
 export class ProfileNotVisible extends Error {}
 
+const ROLES: readonly Role[] = ["FOUNDER", "BUILDER", "BOTH"];
+
+/** FOUNDER and BOTH profiles are founders: they may, and before publishing must, have a pitch. */
+function isFounder(role: Role): boolean {
+  return role === "FOUNDER" || role === "BOTH";
+}
+
+function isBuilder(role: Role): boolean {
+  return role === "BUILDER" || role === "BOTH";
+}
+
+/** One side can be the founder and the other the builder. */
+function complementary(a: Role, b: Role): boolean {
+  return (isFounder(a) && isBuilder(b)) || (isBuilder(a) && isFounder(b));
+}
+
 function isBlank(text: string): boolean {
   return text.trim().length === 0;
 }
@@ -144,7 +160,7 @@ function complete(row: {
     !isBlank(row.location) &&
     row.skills.length > 0 &&
     row.interests.length > 0 &&
-    (row.role !== "FOUNDER" || row.startupPitch !== undefined)
+    (!isFounder(row.role) || row.startupPitch !== undefined)
   );
 }
 
@@ -191,7 +207,7 @@ export class ProfileSettingConcept {
     if (this.#byOwner.has(input.user)) {
       throw new ProfileAlreadyExists(PROFILE_ALREADY_EXISTS_DETAIL);
     }
-    if ((input.role !== "FOUNDER" && input.role !== "BUILDER") || !validData(input)) {
+    if (!ROLES.includes(input.role) || !validData(input)) {
       throw new InvalidProfile(INVALID_PROFILE_DETAIL);
     }
     const row: ProfileRow = {
@@ -209,7 +225,7 @@ export class ProfileSettingConcept {
   setStartupPitch({ user, pitch }: { user: User; pitch: string }): Record<string, never> {
     const row = this.#byOwner.get(user);
     if (row === undefined) throw new PitchProfileNotFound(PITCH_PROFILE_NOT_FOUND_DETAIL);
-    if (row.role !== "FOUNDER") throw new PitchNotFounder(PITCH_NOT_FOUNDER_DETAIL);
+    if (!isFounder(row.role)) throw new PitchNotFounder(PITCH_NOT_FOUNDER_DETAIL);
     if (typeof pitch !== "string" || isBlank(pitch)) throw new EmptyPitch(EMPTY_PITCH_DETAIL);
     row.startupPitch = pitch;
     return {};
@@ -282,7 +298,7 @@ export class ProfileSettingConcept {
     const own = this.#byOwner.get(user);
     if (own === undefined) return [];
     return this.#profiles
-      .filter((row) => row.visible && row.role !== own.role)
+      .filter((row) => row.visible && row.owner !== user && complementary(own.role, row.role))
       .map((row) => ({
         candidate: row.owner,
         skills: [...row.skills],
