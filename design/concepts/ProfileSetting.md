@@ -24,7 +24,7 @@ external User
   The opaque identity of the person who owns a profile.
 opaque Entries
   A finite list of text entries, such as skills or interests, exactly as supplied.
-Role is FOUNDER, BUILDER, or BOTH
+Role is FOUNDER or BUILDER or BOTH
   Whether the person is a founder seeking teammates or a builder seeking a startup, or both.
 ```
 
