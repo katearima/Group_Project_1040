@@ -19,8 +19,8 @@ Meet the founders and builders you'd want to start something with. Founders find
 - [Concept design](documentation/concept-design.md): the five concepts and how they work together
 - [Concept contracts](design/concepts/) checked by the framework, and the [reactions](design/compositions/) that connect them
 - [Design notes](documentation/design-notes.md): visual study and decisions
-- [Development plan](documentation/development-plan)
-- [Problem framing](documentation/problem-framing/README.md), including the ethical analysis
+- [Development plan](documentation/development-plan/development-plan.md) and the [Sprint 2 update](documentation/development-plan/sprint-2-summary.md)
+- [Problem framing](documentation/problem-framing/1-domain.md), including the [ethical analysis](documentation/problem-framing/6-ethical-analysis.md), and the [documentation index](documentation/README.md)
 - [Test results](tests/output.txt) and [what the tests cover](tests/README.md)
 - [`.sync-engine/work/`](.sync-engine/work/): briefs, prompts and run records for the agent-assisted changes
 
@@ -59,6 +59,6 @@ Accounts, profiles, matches, recommendations, notifications and chats are saved 
 | `PORT`        | Port the server listens on           | `8080`                   |
 | `HOST`        | Interface the server binds to        | `localhost`              |
 
-## TODOs/Not built yet
+## Not built yet
 
 Viewing other people's full profiles, See Later, hiding and republishing a profile, and the guard that limits interest to visible, complementary profiles. They are listed with reasons in [`CLAUDE.md`](CLAUDE.md).
