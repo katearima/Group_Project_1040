@@ -34,10 +34,10 @@
 
 ### Scrum Reports
 
-| Sprint # | Report                                           |
-| -------- | ------------------------------------------------ |
-| 1        | [Sprint 1 Development Plan](development-plan.md) |
-| 2        | [Sprint 2 Summary](sprint-2-summary.md)          |
+| Sprint # | Report                                                            |
+| -------- | ----------------------------------------------------------------- |
+| 1        | [Sprint 1 Development Plan](development-plan/development-plan.md) |
+| 2        | [Sprint 2 Summary](development-plan/sprint-2-summary.md)          |
 
 ### Supporting Contracts
 

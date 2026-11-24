@@ -17,7 +17,7 @@ Meet the founders and builders you'd want to start something with. Founders find
 - [Concept design](documentation/concept-design.md): the five concepts and how they work together
 - [Concept contracts](design/concepts/) checked by the framework, and the [reactions](design/compositions/) that connect them
 - [Design notes](documentation/design-notes.md): visual study and decisions
-- [Development plan](documentation/development-plan.md)
+- [Development plan](documentation/development-plan)
 - [Problem framing](documentation/problem-framing/README.md), including the ethical analysis
 - [Test results](tests/output.txt) and [what the tests cover](tests/README.md)
 - [`.sync-engine/work/`](.sync-engine/work/): briefs, prompts and run records for the agent-assisted changes
@@ -34,6 +34,7 @@ bun run db:up            # start MongoDB
 bun run dev:backend      # API on http://localhost:8080/api
 bun run dev:frontend     # app on http://localhost:5173 (second terminal)
 ```
+
 ### Test it
 
 ```bash
@@ -50,11 +51,11 @@ Accounts, profiles, matches, recommendations, notifications and chats are saved 
 
 `bun run preview` builds the frontend and serves everything from the backend on http://localhost:3000, the way the deployed app runs.
 
-| Variable | Meaning | Default |
-| --- | --- | --- |
+| Variable      | Meaning                              | Default                  |
+| ------------- | ------------------------------------ | ------------------------ |
 | `MONGODB_URL` | MongoDB connection string (required) | none; see `.env.example` |
-| `PORT` | Port the server listens on | `8080` |
-| `HOST` | Interface the server binds to | `localhost` |
+| `PORT`        | Port the server listens on           | `8080`                   |
+| `HOST`        | Interface the server binds to        | `localhost`              |
 
 ## TODOs/Not built yet
 
