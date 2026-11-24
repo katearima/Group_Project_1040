@@ -1,8 +1,10 @@
+import { resolve } from "node:path";
 import { createGateway } from "@mit-sdg/sync-engine/boundary";
 import { createHttpHandler } from "@mit-sdg/sync-engine-http/handler";
 import type { Db } from "mongodb";
 import type { AppWire } from "../generated/wire.ts";
 import { appHttpPolicy, assembleApplication } from "./assembly.ts";
+import { db } from "./db.ts";
 
 /** The package HTTP handler over a freshly assembled application. */
 export function createApplicationHttpHandler(options: { database?: Db } = {}) {
@@ -50,14 +52,68 @@ export function createClientRateLimiter(
 const TOO_MANY_REQUESTS = () =>
   Response.json({ error: "TOO_MANY_REQUESTS" }, { status: 429, headers: { "retry-after": "60" } });
 
-export function startHost(port = Number(process.env.PORT ?? 8080)) {
+const NO_STORE = { "Cache-Control": "no-store" };
+
+/**
+ * The deployment platform's health check: answers 200 `{ status: "ok" }` only when MongoDB
+ * answers a small read within a few seconds, and 503 `{ status: "unavailable" }` otherwise,
+ * so a deployment that cannot reach its database is not marked healthy.
+ */
+export async function checkHealth(database: Db = db): Promise<Response> {
+  try {
+    await database
+      .collection("chatting.conversations")
+      .findOne({}, { projection: { _id: 1 }, maxTimeMS: 2000, timeoutMS: 3000 });
+    return Response.json({ status: "ok" }, { headers: NO_STORE });
+  } catch {
+    return Response.json({ status: "unavailable" }, { status: 503, headers: NO_STORE });
+  }
+}
+
+/** The built frontend (`bun run build`). */
+const SITE = resolve(import.meta.dir, "../frontend/dist");
+
+/**
+ * Answers a GET for a page or asset of the built frontend: a path naming a built file, such as
+ * /assets/index-abc.js, gets that file; every other path gets index.html, so page links like
+ * /chats/<id> load the app.
+ */
+export async function serveSite(pathname: string, site = SITE): Promise<Response> {
+  const path = resolve(site, `.${pathname}`);
+  const asset = Bun.file(path);
+  if (pathname !== "/" && path.startsWith(`${site}/`) && (await asset.exists())) {
+    return new Response(asset);
+  }
+  const page = Bun.file(`${site}/index.html`);
+  if (await page.exists()) return new Response(page);
+  return new Response("The frontend isn't built yet: run `bun run build`.", { status: 404 });
+}
+
+/**
+ * The HTTP server: the API under /api (rate-limited, routed by the package handler), a health
+ * check for the deployment platform, and the built frontend for every other GET. The host
+ * only separates API from pages; which endpoint runs is decided by the package handler.
+ */
+export function startHost(
+  port = Number(process.env.PORT ?? 8080),
+  hostname = process.env.HOST ?? "localhost",
+) {
   const handle = createApplicationHttpHandler();
   const allow = createClientRateLimiter();
   return Bun.serve({
     port,
+    hostname,
     fetch(request, server) {
-      const client = server.requestIP(request)?.address ?? "unknown";
-      return allow(client) ? handle(request) : TOO_MANY_REQUESTS();
+      const { pathname } = new URL(request.url);
+      if (pathname === "/api" || pathname.startsWith("/api/")) {
+        const client = server.requestIP(request)?.address ?? "unknown";
+        return allow(client) ? handle(request) : TOO_MANY_REQUESTS();
+      }
+      if (pathname === "/health") return checkHealth();
+      if (request.method !== "GET" && request.method !== "HEAD") {
+        return new Response("Method not allowed", { status: 405, headers: { allow: "GET, HEAD" } });
+      }
+      return serveSite(pathname);
     },
   });
 }
