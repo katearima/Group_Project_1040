@@ -115,6 +115,10 @@ _conversationBetween (user: User, other: User) : optional (conversation: Convers
   answers the Conversation pairing user and other, whichever is first, with its status
   answers no row when there is none, including for unknown users or when user is other
 
+_isParticipant (conversation: Conversation, user: User) : one (participant: Flag)
+  answers true when conversation exists and user is one of its two Users, OPEN or CLOSED
+  answers false otherwise, including for an unknown conversation or user
+
 _otherParticipant (conversation: Conversation, user: User) : optional (other: User)
   answers the participant of conversation who is not user, when user is a participant
   answers no row when the conversation does not exist or user is not a participant, including for an unknown user

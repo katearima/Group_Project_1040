@@ -10,6 +10,7 @@ export default {
     documents: [
       new URL("./design/types.md", import.meta.url),
       new URL("./design/compositions/Accounts.md", import.meta.url),
+      new URL("./design/compositions/Chatting.md", import.meta.url),
       new URL("./design/compositions/Matching.md", import.meta.url),
       new URL("./design/compositions/Notifications.md", import.meta.url),
       new URL("./design/compositions/Profiles.md", import.meta.url),

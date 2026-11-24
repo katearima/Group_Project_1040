@@ -1,9 +1,9 @@
 import { endpoint, receive, respond } from "@mit-sdg/sync-engine/boundary";
-import { compute, each, former, is, no, whether, where } from "@mit-sdg/sync-engine/language";
+import { compute, each, former, is, no, reaction, when, whether, where } from "@mit-sdg/sync-engine/language";
 import { applicationConceptSet, concepts } from "../concepts.ts";
 import { refreshAfter, sessionUser, take } from "./Profiles.ts";
 
-const { ProfileSetting, Recommending } = concepts;
+const { MutualMatching, ProfileSetting, Recommending } = concepts;
 const { numberSupplied } = applicationConceptSet.computations;
 
 /** Reaction 2: saved preferences refresh the user's recommendations while visible. */
@@ -124,6 +124,33 @@ const Preferences = endpoint(
   { input: { defaults: { session: "" } } },
 );
 
+// ---------------------------------------------------------------------------------------
+// Reaction 10 (Recommending half): an unmatched pair leaves each other's feeds
+// ---------------------------------------------------------------------------------------
+
+/** Statuses that still need marking; an already PASSED recommendation is left alone. */
+const NOT_YET_PASSED = ["AVAILABLE", "SEE_LATER", "INTERESTED"];
+
+/** After an unmatch, user's recommendation of other is marked PASSED when one exists. */
+const PassForward = reaction(({ user, other, status }) =>
+  when(MutualMatching.unmatch({ user, other }).responds({}))
+    .where(
+      Recommending._recommendation({ viewer: user, candidate: other }).is({ status }),
+      is.among(status, NOT_YET_PASSED),
+    )
+    .then(Recommending.markPassed({ viewer: user, candidate: other }).responds({})),
+);
+
+/** After an unmatch, other's recommendation of user is marked PASSED when one exists. */
+const PassBack = reaction(({ user, other, status }) =>
+  when(MutualMatching.unmatch({ user, other }).responds({}))
+    .where(
+      Recommending._recommendation({ viewer: other, candidate: user }).is({ status }),
+      is.among(status, NOT_YET_PASSED),
+    )
+    .then(Recommending.markPassed({ viewer: other, candidate: user }).responds({})),
+);
+
 const FeedRows = former("the feed of (viewer)", ({ viewer }, { candidate, score }) =>
   each(Recommending._getFeed({ viewer }).is({ candidate, score })).form({ user: candidate, score }),
 );
@@ -143,4 +170,5 @@ export const composition = {
   Requests: { SetPreferences },
   Reads: { Preferences, Feed },
   Refreshing: { RefreshOnPreferences },
+  Unmatching: { PassForward, PassBack },
 };

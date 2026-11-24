@@ -15,12 +15,11 @@ Deferred integrations:
 
 - ProfileSetting: require visible profiles with complementary roles for Show Interest and
   supply the sender's name for interest notifications.
-- Recommending: update feeds after interest or a pass (Reactions 4 and 5), allow passing
-  from recommendations, and mark recommendations passed after unmatching (Reaction 10).
-- Chatting: create a conversation after matching (Reaction 7), notify about new messages
-  (Reaction 9), and close the conversation after unmatching (Reaction 10).
-
-These integrations are not linked. Until the ProfileSetting guard is added, the target
+- Recommending: update feeds after interest or a pass (Reactions 4 and 5) and allow passing
+  from recommendations.
+These integrations are not linked. Chatting's reactions to matching (opening a
+conversation on a match and closing it on unmatch) are described in Chatting, and
+removing an unmatched pair from each other's feeds is described in Recommendations. Until the ProfileSetting guard is added, the target
 identity is not checked against registered accounts. Interest in an unregistered identity
 records a decision and notification that no signed-in user can see.
 
@@ -56,6 +55,9 @@ and cannot recover a lost notification. The interested-in-you and matches lists 
 MutualMatching directly and remain authoritative. `notify` only refuses empty messages;
 these fixed messages are nonempty. Notification recovery is deferred until persistence
 is added.
+
+Show Interest answers only after its flow settles, so a conversation opened by a new
+match already exists when the endpoint reports it.
 
 ```endpoints
 Matching.Requests.ShowInterest at /matching/show-interest
@@ -95,7 +97,8 @@ the other person, including a self-request or a pair they don't belong to, it re
 On success, one atomic action removes the match and sets both decisions to PASSED.
 The endpoint then returns success. Neither person can show interest again, and a repeated
 unmatch returns `NOT_MATCHED`. Unmatching sends no notification and leaves existing
-notifications untouched.
+notifications untouched. Unmatch answers only after its flow settles, so their
+conversation is already closed and both feeds are updated when the endpoint reports success.
 
 ```endpoints
 Matching.Requests.Unmatch at /matching/unmatch

@@ -1,12 +1,23 @@
 import { assemble } from "@mit-sdg/sync-engine/assembly";
 import { httpPolicy } from "@mit-sdg/sync-engine-http/policy";
+import type { Db } from "mongodb";
 import { composition } from "./composition.ts";
 import { applicationConceptSet } from "./concepts.ts";
+import { ChattingConcept } from "./concepts/Chatting.ts";
+import { db } from "./db.ts";
 
-export function assembleApplication() {
+/**
+ * Assembles the application. Chatting is stored in MongoDB: `database` defaults to the
+ * project database in `src/db.ts`, and tests pass a fresh one. Every other concept is
+ * still in memory and starts empty.
+ */
+export function assembleApplication({ database = db }: { database?: Db } = {}) {
   return assemble({
     conceptSet: applicationConceptSet,
-    instances: applicationConceptSet.implementations(),
+    instances: {
+      ...applicationConceptSet.implementations(),
+      Chatting: new ChattingConcept(database),
+    },
     composition,
   });
 }
@@ -58,5 +69,12 @@ export const appHttpPolicy = httpPolicy({
     INTEREST_RECOMMENDATION_NOT_FOUND: "NOT_FOUND",
     RECOMMENDATION_ALREADY_DECIDED: "CONFLICT",
     DEACTIVATE_RECOMMENDATION_NOT_FOUND: "NOT_FOUND",
+    // Chatting (EMPTY_MESSAGE is shared with Notifying above)
+    CONVERSATION_WITH_SELF: "INVALID_REQUEST",
+    CONVERSATION_EXISTS: "CONFLICT",
+    CONVERSATION_NOT_FOUND: "NOT_FOUND",
+    CONVERSATION_CLOSED: "CONFLICT",
+    CLOSE_TARGET_NOT_FOUND: "NOT_FOUND",
+    CONVERSATION_ALREADY_CLOSED: "CONFLICT",
   },
 });
