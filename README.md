@@ -1,7 +1,8 @@
-# Group_Project_1040
-Team project
+# Startup Matchmaker
 
+This application is a proof of concept for a product that will allow prospective student founders and builders to find each other through algorithmic matchmaking.
 
+Deliverable Tracking:
 https://docs.google.com/spreadsheets/d/1XkOPBRA-6CLnmeJ0T4gd80OykMGjANjbTzZeELhs754/edit?usp=sharing
 
 ## Running locally
@@ -31,5 +32,13 @@ check path `/health`. Add MongoDB in the Settings tab and rename its variable to
 other path.
 
 ## Assignments
+A description and framing of the statement can be found at [F2: Problem Framing](problem-framing/README.md).
 
-- [F2: Problem Framing](problem-framing/README.md)
+A list of the concepts and compositions/reactions can be found at [F3: Concept Design](design/README.md)
+
+## Deliverables
+
+### F4
+- **Development Plan**: [documentation/development-plan.md]
+- **Deployed Application**: \[URL\]
+- **Walkthrough & Screen Recording**: \[path\]
