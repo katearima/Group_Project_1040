@@ -1,16 +1,14 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import AppShell from "./components/AppShell.vue";
+import ToastHost from "./components/ToastHost.vue";
+import AuthScreen from "./views/AuthScreen.vue";
+import { useSession } from "./state/session.ts";
+
+const { state } = useSession();
+</script>
 
 <template>
-  <main class="content">
-    <h1>Startup Matchmaker</h1>
-    <p class="muted">Meet the founders and builders you'd want to start something with.</p>
-  </main>
+  <AppShell v-if="state.session" />
+  <AuthScreen v-else />
+  <ToastHost />
 </template>
-
-<style scoped>
-.content {
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: var(--space-8) var(--space-6);
-}
-</style>

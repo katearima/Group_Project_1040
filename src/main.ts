@@ -3,11 +3,11 @@ import { createGateway } from "@mit-sdg/sync-engine/boundary";
 import { createHttpHandler } from "@mit-sdg/sync-engine-http/handler";
 import type { Db } from "mongodb";
 import type { AppWire } from "../generated/wire.ts";
-import { appHttpPolicy, assembleApplication } from "./assembly.ts";
+import { type AppStores, appHttpPolicy, assembleApplication, openStores } from "./assembly.ts";
 import { db } from "./db.ts";
 
 /** The package HTTP handler over a freshly assembled application. */
-export function createApplicationHttpHandler(options: { database?: Db } = {}) {
+export function createApplicationHttpHandler(options: { database?: Db; stores?: AppStores } = {}) {
   const application = assembleApplication(options);
   const gateway = createGateway<AppWire>({ application });
   return createHttpHandler({ application, gateway, policy: appHttpPolicy });
@@ -97,8 +97,9 @@ export async function serveSite(pathname: string, site = SITE): Promise<Response
 export function startHost(
   port = Number(process.env.PORT ?? 8080),
   hostname = process.env.HOST ?? "localhost",
+  stores: AppStores = {},
 ) {
-  const handle = createApplicationHttpHandler();
+  const handle = createApplicationHttpHandler({ stores });
   const allow = createClientRateLimiter();
   return Bun.serve({
     port,
@@ -119,6 +120,14 @@ export function startHost(
 }
 
 if (import.meta.main) {
-  const server = startHost();
+  // Load what the last run saved, and write the final state back when the platform stops us.
+  const { stores, flush } = await openStores();
+  const server = startHost(undefined, undefined, stores);
   console.log(`Listening on ${server.url}`);
+  for (const signal of ["SIGTERM", "SIGINT"] as const) {
+    process.on(signal, () => {
+      void server.stop();
+      void flush().finally(() => process.exit(0));
+    });
+  }
 }

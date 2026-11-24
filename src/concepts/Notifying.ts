@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { type Persistence, plain } from "../persistence.ts";
 
 export type User = string;
 export type Notification = string;
@@ -18,6 +19,8 @@ export interface NotifyingDependencies {
   freshNotification?: () => Notification;
   /** Notifications to start from, in creation order. */
   initial?: Iterable<NotificationRecord>;
+  /** Keeps notifications across restarts; its saved state replaces `initial`. */
+  persistence?: Persistence<{ notifications: NotificationRecord[] }>;
 }
 
 export const EMPTY_MESSAGE_DETAIL = "A notification message must not be empty.";
@@ -50,9 +53,12 @@ export class NotifyingConcept {
   #nextPosition = 0;
   #freshNotification: () => Notification;
 
-  constructor({ freshNotification = randomUUID, initial = [] }: NotifyingDependencies = {}) {
+  readonly #persistence: Persistence<{ notifications: NotificationRecord[] }> | undefined;
+
+  constructor({ freshNotification = randomUUID, initial = [], persistence }: NotifyingDependencies = {}) {
     this.#freshNotification = freshNotification;
-    for (const record of initial) {
+    this.#persistence = persistence;
+    for (const record of persistence?.initial?.notifications ?? initial) {
       this.#store({ ...record, createdAt: new Date(record.createdAt.getTime()) });
     }
   }
@@ -79,6 +85,7 @@ export class NotifyingConcept {
       createdAt: new Date(createdAt.getTime()),
       status: "UNREAD",
     });
+    this.#changed();
     return { notification };
   }
 
@@ -95,6 +102,7 @@ export class NotifyingConcept {
     }
     if (found.status === "DISMISSED") throw new ReadTargetDismissed(READ_TARGET_DISMISSED_DETAIL);
     found.status = "READ";
+    this.#changed();
     return { notification };
   }
 
@@ -110,6 +118,7 @@ export class NotifyingConcept {
       throw new DismissTargetNotFound(DISMISS_TARGET_NOT_FOUND_DETAIL);
     }
     found.status = "DISMISSED";
+    this.#changed();
     return { notification };
   }
 
@@ -153,6 +162,14 @@ export class NotifyingConcept {
       if (stored.recipient === user && include(stored.status)) rows.push(stored);
     }
     return rows.sort(newestFirst);
+  }
+
+  #changed(): void {
+    if (this.#persistence === undefined) return;
+    const records = [...this.#notifications.values()]
+      .sort((a, b) => a.position - b.position)
+      .map(({ position: _position, ...record }) => record);
+    this.#persistence.save({ notifications: plain(records) });
   }
 
   #allocate(): Notification {

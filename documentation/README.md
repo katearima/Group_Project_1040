@@ -1,12 +1,14 @@
-# F3: Concept Design
+## Problem Framing
+| # | Section |
+|---|---|
+| 1 | [Domain](1-domain.md) |
+| 2 | [Bad situations](2-bad-situations.md) |
+| 3 | [Evidence](3-evidence.md) |
+| 4 | [Workarounds and comparables](4-workarounds-comparables.md) |
+| 5 | [Solution sketch](5-solution-sketch.md) |
+| 6 | [Ethical analysis (VSD)](6-ethical-analysis.md) |
 
-**Matchmakers: Concept Design & Compositions Architecture.**
-
----
-
-## Deliverables
-
-### Concepts
+## Concepts
 
 | # | Concept | Purpose |
 |---|---|---|
@@ -18,7 +20,7 @@
 | 6 | [Chatting](concepts/Chatting.md) | Facilitates and stores conversations between matched users |
 | 7 | [Notifying](concepts/Notifying.md) | Issues and manages user notifications |
 
-### Compositions
+## Compositions
 
 | # | Composition | Associated Concepts | Primary Interactions & Reactions |
 |---|---|---|---|
@@ -31,3 +33,4 @@
 
 ### Supporting Contracts
 - [Application Types & Shared Computations](types.md)
+
