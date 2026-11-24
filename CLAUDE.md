@@ -42,7 +42,10 @@ Run `bun install` in `frontend/` too. `bun run check` also type-checks the front
   the typed sync-engine HTTP client over `generated/wire.ts` (`AppWireHttp`), calling
   `/api/...` on the page's own origin; the dev server forwards `/api` to :8080 unchanged.
   `src/styles/tokens.css` holds the palette and fonts from `documentation/colors.png` and
-  `typography.png`.
+  `typography.png`. Pages are in `src/views/` (Auth, Discover, Matches, Messages, Profile),
+  shared pieces in `src/components/`, and state in `src/state/` (session in `localStorage`,
+  hash navigation, polling, toasts). `src/api/errors.ts` maps each endpoint's HTTP error
+  category to a sentence. There is no router dependency; lists refresh by polling.
 - `.sync-engine/work/<slug>/`: sync-engine skill work items (brief, prompts, run records).
 
 ## Status (as of 2026-11-23)
