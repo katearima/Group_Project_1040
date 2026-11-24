@@ -1,0 +1,41 @@
+/*
+ * Design tokens. Colors come from the team's palette boards in documentation/colors.png
+ * (vibrant blue, warm yellow, orange-red, lavender, deep green on off-white); fonts follow
+ * documentation/typograhy.png (a bold condensed display face with a plain sans for text).
+ */
+:root {
+  --color-bg: #faf8f2;
+  --color-surface: #ffffff;
+  --color-text: #1c1a17;
+  --color-text-muted: #5c5750;
+  --color-border: #e4dfd4;
+
+  --color-accent: #1f3fbf; /* vibrant blue: primary actions, links */
+  --color-yellow: #f2c94c;
+  --color-orange: #e8552e;
+  --color-lavender: #d59bd6;
+  --color-green: #3e6b2f;
+  --color-danger: #c73a3a;
+
+  --font-display: "Anton", "Arial Narrow", sans-serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-md: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.75rem;
+  --text-2xl: 2.75rem;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 24px;
+}

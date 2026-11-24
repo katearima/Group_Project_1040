@@ -21,7 +21,7 @@ afterAll(dropTestDatabases);
 
 async function post(path: string, body: unknown): Promise<{ status: number; body: Json }> {
   const response = await handler(
-    new Request(`http://localhost${path}`, {
+    new Request(`http://localhost/api${path}`, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(body),

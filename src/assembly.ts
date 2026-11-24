@@ -24,6 +24,9 @@ export function assembleApplication({ database = db }: { database?: Db } = {}) {
 
 /** HTTP projection policy: caller-visible refusal codes and their public categories. */
 export const appHttpPolicy = httpPolicy({
+  // Endpoints are served under /api (e.g. /api/accounts/register), so they never collide
+  // with the frontend's page paths such as /matches or /chats/<id>.
+  basePath: "/api",
   // Every endpoint takes a few short strings; reject oversized bodies before parsing.
   limits: { requestBodyBytes: 16 * 1024 },
   // INVALID_SESSION_LIFETIME is deliberately unmapped: it signals server misconfiguration,

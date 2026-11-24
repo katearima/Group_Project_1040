@@ -13,11 +13,14 @@ bun test                 # concept unit tests + HTTP integration tests (fresh Mo
 bun run check            # sync-engine source/config check + artifacts check + tsc
 bun run check:design     # authored design grammar check
 bun run generate         # regenerate generated/ (after design, composition or HTTP policy changes)
-bun run start            # HTTP host on PORT (default 8080)
+bun run start            # API under /api, /health, and frontend/dist, on HOST:PORT (default localhost:8080)
+bun run dev:frontend     # Vite dev server on :5173, proxying /api/* to the backend on :8080
+bun run build            # build the frontend into frontend/dist
+bun run preview          # build, then serve the whole app on :3000 the way the platform does
 ```
 
-`bun run dev`, `dev:frontend` and `up` reference `web/server.ts` and `scripts/check-api.ts`,
-which do not exist yet.
+Run `bun install` in `frontend/` too. `bun run check` also type-checks the frontend
+(`vue-tsc`). `bun run up` still references `scripts/check-api.ts`, which does not exist yet.
 
 ## Layout
 
@@ -31,8 +34,15 @@ which do not exist yet.
 - `src/concepts.ts`: registers concepts, refusal→error-class maps, and computations.
 - `src/compositions/*.ts`: endpoint/reaction code, one file per design composition.
 - `src/assembly.ts`: assembly plus the HTTP policy (`appHttpPolicy`).
-- `src/main.ts`: Bun host over the `@mit-sdg/sync-engine-http` handler, plus rate limiter.
+- `src/main.ts`: Bun host. `/api/*` goes to the `@mit-sdg/sync-engine-http` handler (with the
+  rate limiter), `/health` answers `{ status: "ok" }` only if a MongoDB read succeeds (503 otherwise), and every other GET is served from `frontend/dist`
+  with `index.html` as the fallback (`serveSite`).
 - `generated/`: produced by `bun run generate`; never edit by hand.
+- `frontend/`: Vue 3 + Vite app (set up after the conceptbox example). `src/api/client.ts` is
+  the typed sync-engine HTTP client over `generated/wire.ts` (`AppWireHttp`), calling
+  `/api/...` on the page's own origin; the dev server forwards `/api` to :8080 unchanged.
+  `src/styles/tokens.css` holds the palette and fonts from `documentation/colors.png` and
+  `typograhy.png`.
 - `.sync-engine/work/<slug>/`: sync-engine skill work items (brief, prompts, run records).
 
 ## Status (as of 2026-11-23)
@@ -89,8 +99,15 @@ Not yet implemented (deliberately documented as deferred in `design/compositions
   helpers `#private`, and have a zero-argument constructor (`Class.length === 0`).
 - **Time is an input.** Concepts never read the clock; compositions bind `now(time)` once per
   flow and pass it in.
-- **Hosts don't route.** Never match paths or call concepts from host code; the HTTP
-  package handler and `appHttpPolicy` own routing, body limits and error mapping.
+- **Hosts don't route endpoints.** Never match endpoint paths or call concepts from host
+  code; the HTTP package handler and `appHttpPolicy` (including `basePath: "/api"`) own
+  routing, body limits and error mapping. The host only separates `/api/*` from `/health`
+  and the static frontend.
+- **Deployment** is on mit-sdg.dev (guide: https://61040.github.io/fa26/resources/deploying-apps/):
+  runtime Bun, package directories `.` and `frontend`, build script `build`, start script
+  `start`, health check `/health`, MongoDB variable renamed to `MONGODB_URL`. The platform sets
+  PORT and HOST and ignores compose.yaml and .env. Keep `packageManager` equal to the local
+  `bun --version` (bun.lock format) and commit both lockfiles.
 - **HTTP error categories are fixed** (`INVALID_REQUEST`, `UNAUTHORIZED`, `FORBIDDEN`,
   `NOT_FOUND`, `CONFLICT`). Map every new refusal code in `appHttpPolicy`, or it surfaces
   as an internal error. Exact codes exist only on the generated core wire (`AppWire`).
