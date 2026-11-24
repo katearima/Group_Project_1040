@@ -982,7 +982,7 @@ This applies to each existing direction, keeping the feed decisions consistent w
 
 **1. ProfileSetting**
 
-Keti registers as a builder at MIT. She adds her software engineering skills and her interest in traveling and exploring new places. She indicates that she is looking to join an early-stage startup related to travel.
+Keti registers as a builder at MIT. She adds her software engineering skills and her interest in traveling and exploring new places.
 
 Bumba registers as a founder at BU. He is building an app that helps solo travelers meet other travelers, find activities to do together, and explore new cities. He is looking for a technical co-founder to help develop the app.
 
@@ -990,15 +990,17 @@ Bumba registers as a founder at BU. He is building an app that helps solo travel
 
 Keti and Bumba both list travel among their interests. Keti selects travel as a preferred interest, and Bumba selects software engineering as a preferred skill. Both publish their completed profiles. Recommending sees that Keti's interests in traveling and her software engineering skills align with what Bumba is looking for.
 
-Bumba appears in Keti's recommended feed, even though they attend different universities. Keti is excited to find a startup working on something she is genuinely interested in.
+Bumba appears near the top of Keti's recommended feed with a high match percentage, even though they attend different universities.
 
 **3. MutualMatching**
 
-Keti reads Bumba's pitch about making solo traveling easier and helping travelers connect with people who have similar interests. She likes the idea and presses **Show Interest**.
+Keti sees Bumba's high match percentage and presses **Show Interest**.
 
-Bumba can see Keti in his **Interested in You** section. He reads her profile, sees her technical skills and passion for traveling, and also presses Show Interest.
+Bumba sees Keti in his **Interested in You** section and also presses **Show Interest**.
 
 They become a match.
+
+*In the alpha, people see a username and a match percentage in their feed. Viewing someone's full profile and pitch before deciding is planned for a later stage.*
 
 **4. Notifying**
 

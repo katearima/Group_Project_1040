@@ -16,5 +16,6 @@ Limitations:
 
 - No frontend tests yet; the UI is not covered.
 - Persistence is tested by a restart test (`src/persistence.test.ts`) that reassembles the app over the same database. Snapshots are queued writes, so a hard crash can lose the last changes.
+- Show Interest is not guarded against accounts without a published profile (deferred in the design), so there is no test for it.
 - Runs are local only; the deployed app has not been tested automatically.
 - Authenticating has no unit tests of its own (vendored from the catalog); it is exercised through the integration tests.

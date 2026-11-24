@@ -55,3 +55,26 @@ We also want to be careful about some ethical concerns. Since users share person
 There are still a few things we need to figure out. We have a starting rule for compatibility scores, but we need to see how well it works for users, how to make sure new users get enough recommendations, and how to measure whether a match is actually successful. We also need to think more about how to prevent fake profiles and unwanted interactions.
 
 Overall, our goal is to make finding startup teammates easier and more personal. Instead of scrolling through startup names or relying on existing connections, users should be able to discover people who share their interests and would genuinely want to work together.
+
+# Alpha Update
+
+## What changed since the concept design
+
+- **Profiles gained `availability`** (hours per week), which the Recommending score uses, and a **BOTH** role for people who are founders and builders.
+- **Chatting is built.** A match opens a conversation, a message notifies the other person, and unmatching closes the conversation but keeps the messages.
+- **A Vue frontend now covers the main journey:** sign in, profile and preferences, Discover, Matches, Messages and notifications.
+- **State is saved in MongoDB.** Chatting stores its rows directly. Accounts, profiles, matches, recommendations and notifications save a snapshot of their state after every change. Sessions are not saved, so a redeploy signs everyone out.
+
+## Decisions
+
+- **Snapshot persistence instead of rewriting each concept for MongoDB.** The concepts keep their tested in-memory logic and take an optional `persistence`, so the concept tests did not change and a restart test covers the saving. The cost is that a hard crash can lose the last moments of changes, which is acceptable at this scale.
+- **Endpoints that start a chain of reactions answer after the flow settles,** because an endpoint-owned fan-out never answers when the candidate list is empty.
+- **The session token travels in the request body** and is kept in the browser's local storage. The acting user always comes from the session, never from the request.
+- **Lists refresh by polling** (every 4 to 10 seconds) instead of pushing updates, which keeps the server simple and avoids page refreshes.
+- **Whitespace-only text counts as empty,** and usernames are the visible identity in lists.
+
+## Not built yet
+
+- **Viewing other people's profiles and pitches.** The feed shows a username and a match percentage only.
+- **A guard on Show Interest.** The interface only offers published people, but the endpoint itself accepts any username, so a direct request can show interest in an account with no published profile. The design defers this guard (see `design/compositions/Matching.md`).
+- **See Later, hiding and republishing a profile,** and the two reactions that mark a matched person as no longer recommended, so matched people still appear in each other's feed.
