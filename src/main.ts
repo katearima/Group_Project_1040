@@ -1,11 +1,12 @@
 import { createGateway } from "@mit-sdg/sync-engine/boundary";
 import { createHttpHandler } from "@mit-sdg/sync-engine-http/handler";
+import type { Db } from "mongodb";
 import type { AppWire } from "../generated/wire.ts";
 import { appHttpPolicy, assembleApplication } from "./assembly.ts";
 
 /** The package HTTP handler over a freshly assembled application. */
-export function createApplicationHttpHandler() {
-  const application = assembleApplication();
+export function createApplicationHttpHandler(options: { database?: Db } = {}) {
+  const application = assembleApplication(options);
   const gateway = createGateway<AppWire>({ application });
   return createHttpHandler({ application, gateway, policy: appHttpPolicy });
 }

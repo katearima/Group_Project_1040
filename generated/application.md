@@ -34,6 +34,36 @@ Defined in [Authenticating](../design/concepts/Authenticating.md), line 1.
 
 - `Authenticating` — instance of `Authenticating` — [Application types and instances](../design/types.md), line 10.
 
+### Chatting
+
+Defined in [Chatting](../design/concepts/Chatting.md), line 1.
+
+#### Actions
+
+- `createConversation(firstUser: User, secondUser: User) : returns (conversation: Conversation)`
+  - Refuses `CONVERSATION_WITH_SELF`: You cannot start a conversation with yourself.
+  - Refuses `CONVERSATION_EXISTS`: You already have a conversation with this person.
+- `sendMessage(conversation: Conversation, sender: User, content: String, sentAt: DateTime) : returns (message: Message)`
+  - Refuses `CONVERSATION_NOT_FOUND`: No such conversation.
+  - Refuses `CONVERSATION_CLOSED`: This conversation is closed; you can no longer send messages.
+  - Refuses `EMPTY_MESSAGE`: A message must not be empty.
+- `closeConversation(conversation: Conversation) : returns ()`
+  - Refuses `CLOSE_TARGET_NOT_FOUND`: No such conversation.
+  - Refuses `CONVERSATION_ALREADY_CLOSED`: This conversation is already closed.
+
+#### Queries
+
+- `_getConversations(user: User) : many (conversation: Conversation, other: User, status: ConversationStatus)`
+- `_getMessages(user: User, conversation: Conversation) : many (message: Message, sender: User, content: String, sentAt: DateTime)`
+- `_conversationBetween(user: User, other: User) : optional (conversation: Conversation, status: ConversationStatus)`
+- `_isParticipant(conversation: Conversation, user: User) : one (participant: Flag)`
+- `_otherParticipant(conversation: Conversation, user: User) : optional (other: User)`
+
+#### Instances
+
+- `Chatting` — instance of `Chatting` — [Application types and instances](../design/types.md), line 27.
+  - `User` is `Authenticating.Account` — [Application types and instances](../design/types.md), line 28.
+
 ### MutualMatching
 
 Defined in [MutualMatching](../design/concepts/MutualMatching.md), line 1.
@@ -178,16 +208,28 @@ Defined in [Sessioning](../design/concepts/Sessioning.md), line 1.
 
 ## Computations
 
-- `currentInstant() : DateTime` — [Application types and instances](../design/types.md), line 35.
-- `matchesLink(user: Authenticating.Account) : String` — [Matching](../design/compositions/Matching.md), line 67.
+- `conversationLink(conversation: Chatting.Conversation) : String` — [Chatting](../design/compositions/Chatting.md), line 51.
+- `currentInstant() : DateTime` — [Application types and instances](../design/types.md), line 38.
+- `matchesLink(user: Authenticating.Account) : String` — [Matching](../design/compositions/Matching.md), line 69.
 - `numberSupplied(value?: Number) : Flag` — [Recommendations](../design/compositions/Recommendations.md), line 47.
-- `profileLink(user: Authenticating.Account) : String` — [Matching](../design/compositions/Matching.md), line 65.
+- `profileLink(user: Authenticating.Account) : String` — [Matching](../design/compositions/Matching.md), line 67.
 - `sessionLifetime() : Number` — [Accounts](../design/compositions/Accounts.md), line 10.
 
 ## Formers
 
 _Formers name result shapes evaluated when asked. The source former owns_
 _the authored explanation; this section records the generated shape._
+
+### the conversations of (user)
+
+```former
+Former "the conversations of (user)" — inputs (user); bindings (conversation, other, status); promises exactly one record — forms:
+  each Chatting._getConversations (user) has (conversation, other, status)
+    form a record of
+      conversation
+      other
+      status
+```
 
 ### the feed of (viewer)
 
@@ -206,6 +248,18 @@ Former "the matches of (user)" — inputs (user); bindings (other); promises exa
   each MutualMatching._getMatches (user) has (other)
     form a record of
       user: other
+```
+
+### the messages of (conversation) as read by (user)
+
+```former
+Former "the messages of (conversation) as read by (user)" — inputs (user, conversation); bindings (message, sender, content, sentAt); promises exactly one record — forms:
+  each Chatting._getMessages (conversation, user) has (content, message, sender, sentAt)
+    form a record of
+      content
+      message
+      sender
+      sentAt
 ```
 
 ### the notifications of (user)
@@ -354,6 +408,162 @@ then
   RequestBoundary.respond (ended, requestId)
 ```
 
+### Chatting.Reacting.CloseOnUnmatch
+
+Authored path: `Chatting.Reacting.CloseOnUnmatch`.
+- Covered by [Chatting](../design/compositions/Chatting.md), line 28.
+
+```reaction
+when MutualMatching.unmatch (other, user)
+where
+  Chatting._conversationBetween (other, user) has (conversation, status: "OPEN")
+then
+  Chatting.closeConversation (conversation)
+```
+
+### Chatting.Reacting.NotifyOnMessage
+
+Authored path: `Chatting.Reacting.NotifyOnMessage`.
+- Covered by [Chatting](../design/compositions/Chatting.md), line 40.
+
+```reaction
+when Chatting.sendMessage (conversation, sender, sentAt)
+where
+  Chatting._otherParticipant (conversation, user: sender) has (other: recipient)
+  link is conversationLink (conversation)
+then
+  Notifying.notify (createdAt: sentAt, link, message: "You have a new message!", recipient)
+```
+
+### Chatting.Reacting.OpenOnMatch
+
+Authored path: `Chatting.Reacting.OpenOnMatch`.
+- Covered by [Chatting](../design/compositions/Chatting.md), line 16.
+
+```reaction
+when MutualMatching.showInterest (from, to, matched)
+where
+  matched is among [true]
+then
+  Chatting.createConversation (firstUser: from, secondUser: to)
+```
+
+### Chatting.Reads.Conversations
+
+Authored path: `Chatting.Reads.Conversations`.
+- Covered by [Chatting](../design/compositions/Chatting.md), line 57.
+- Covered by [Chatting](../design/compositions/Chatting.md), line 64.
+
+```reaction
+when RequestBoundary.request (path: "/chats/list", requestId, session)
+where
+  time is the current flow's instant
+then
+  Sessioning.current (now: time, session)
+```
+
+### Chatting.Reads.Conversations#2
+
+Authored path: `Chatting.Reads.Conversations`.
+- Covered by [Chatting](../design/compositions/Chatting.md), line 57.
+- Covered by [Chatting](../design/compositions/Chatting.md), line 64.
+
+```reaction
+when Sessioning.current (now: time, session, subject: user), asked by Chatting.Reads.Conversations
+where
+  earlier, RequestBoundary.request (path: "/chats/list", requestId, session)
+then
+  RequestBoundary.respond (conversations: former "the conversations of (user)" with (user), requestId)
+```
+
+### Chatting.Reads.Messages
+
+Authored path: `Chatting.Reads.Messages`.
+- Covered by [Chatting](../design/compositions/Chatting.md), line 69.
+- Covered by [Chatting](../design/compositions/Chatting.md), line 78.
+
+```reaction
+when RequestBoundary.request (conversation, path: "/chats/messages", requestId, session)
+where
+  time is the current flow's instant
+then
+  Sessioning.current (now: time, session)
+```
+
+### Chatting.Reads.Messages:not-a-participant#2
+
+Authored path: `Chatting.Reads.Messages`.
+- Covered by [Chatting](../design/compositions/Chatting.md), line 69.
+- Covered by [Chatting](../design/compositions/Chatting.md), line 78.
+
+```reaction
+when Sessioning.current (now: time, session, subject: user), asked by Chatting.Reads.Messages
+where
+  earlier, RequestBoundary.request (conversation, path: "/chats/messages", requestId, session)
+  Chatting._isParticipant (conversation, user) has (participant: false)
+then
+  RequestBoundary.respond (error: "CONVERSATION_NOT_FOUND", requestId)
+```
+
+### Chatting.Reads.Messages:participant#2
+
+Authored path: `Chatting.Reads.Messages`.
+- Covered by [Chatting](../design/compositions/Chatting.md), line 69.
+- Covered by [Chatting](../design/compositions/Chatting.md), line 78.
+
+```reaction
+when Sessioning.current (now: time, session, subject: user), asked by Chatting.Reads.Messages
+where
+  earlier, RequestBoundary.request (conversation, path: "/chats/messages", requestId, session)
+  Chatting._isParticipant (conversation, user) has (participant: true)
+  Chatting._otherParticipant (conversation, user) has (other)
+  Chatting._conversationBetween (other, user) has (conversation, status)
+then
+  RequestBoundary.respond (messages: former "the messages of (conversation) as read by (user)" with (conversation, user), other, requestId, status)
+```
+
+### Chatting.Requests.Send
+
+Authored path: `Chatting.Requests.Send`.
+- Covered by [Chatting](../design/compositions/Chatting.md), line 83.
+- Covered by [Chatting](../design/compositions/Chatting.md), line 96.
+
+```reaction
+when RequestBoundary.request (content, conversation, path: "/chats/send", requestId, session)
+where
+  time is the current flow's instant
+then
+  Sessioning.current (now: time, session)
+```
+
+### Chatting.Requests.Send#2
+
+Authored path: `Chatting.Requests.Send`.
+- Covered by [Chatting](../design/compositions/Chatting.md), line 83.
+- Covered by [Chatting](../design/compositions/Chatting.md), line 96.
+
+```reaction
+when Sessioning.current (now: time, session, subject: user), asked by Chatting.Requests.Send
+where
+  earlier, RequestBoundary.request (content, conversation, path: "/chats/send", requestId, session)
+then
+  Chatting.sendMessage (content, conversation, sender: user, sentAt: time)
+```
+
+### Chatting.Requests.Send#3
+
+Authored path: `Chatting.Requests.Send`.
+- Covered by [Chatting](../design/compositions/Chatting.md), line 83.
+- Covered by [Chatting](../design/compositions/Chatting.md), line 96.
+
+```reaction
+when Chatting.sendMessage (content, conversation, sender: user, sentAt: time, message), asked by Chatting.Requests.Send#2
+where
+  earlier, RequestBoundary.request (content, conversation, path: "/chats/send", requestId, session)
+then
+  RequestBoundary.respond (message, requestId)
+```
+
 ### DeliverFaultToAsker
 
 ```reaction
@@ -377,8 +587,8 @@ then
 ### Matching.Reads.InterestedInYou
 
 Authored path: `Matching.Reads.InterestedInYou`.
-- Covered by [Matching](../design/compositions/Matching.md), line 106.
-- Covered by [Matching](../design/compositions/Matching.md), line 113.
+- Covered by [Matching](../design/compositions/Matching.md), line 109.
+- Covered by [Matching](../design/compositions/Matching.md), line 116.
 
 ```reaction
 when RequestBoundary.request (path: "/matching/interested-in-you", requestId, session)
@@ -391,8 +601,8 @@ then
 ### Matching.Reads.InterestedInYou#2
 
 Authored path: `Matching.Reads.InterestedInYou`.
-- Covered by [Matching](../design/compositions/Matching.md), line 106.
-- Covered by [Matching](../design/compositions/Matching.md), line 113.
+- Covered by [Matching](../design/compositions/Matching.md), line 109.
+- Covered by [Matching](../design/compositions/Matching.md), line 116.
 
 ```reaction
 when Sessioning.current (now: time, session, subject: user), asked by Matching.Reads.InterestedInYou
@@ -405,8 +615,8 @@ then
 ### Matching.Reads.Matches
 
 Authored path: `Matching.Reads.Matches`.
-- Covered by [Matching](../design/compositions/Matching.md), line 118.
-- Covered by [Matching](../design/compositions/Matching.md), line 124.
+- Covered by [Matching](../design/compositions/Matching.md), line 121.
+- Covered by [Matching](../design/compositions/Matching.md), line 127.
 
 ```reaction
 when RequestBoundary.request (path: "/matching/matches", requestId, session)
@@ -419,8 +629,8 @@ then
 ### Matching.Reads.Matches#2
 
 Authored path: `Matching.Reads.Matches`.
-- Covered by [Matching](../design/compositions/Matching.md), line 118.
-- Covered by [Matching](../design/compositions/Matching.md), line 124.
+- Covered by [Matching](../design/compositions/Matching.md), line 121.
+- Covered by [Matching](../design/compositions/Matching.md), line 127.
 
 ```reaction
 when Sessioning.current (now: time, session, subject: user), asked by Matching.Reads.Matches
@@ -433,8 +643,8 @@ then
 ### Matching.Requests.Pass
 
 Authored path: `Matching.Requests.Pass`.
-- Covered by [Matching](../design/compositions/Matching.md), line 73.
-- Covered by [Matching](../design/compositions/Matching.md), line 85.
+- Covered by [Matching](../design/compositions/Matching.md), line 75.
+- Covered by [Matching](../design/compositions/Matching.md), line 87.
 
 ```reaction
 when RequestBoundary.request (other, path: "/matching/pass", requestId, session)
@@ -447,8 +657,8 @@ then
 ### Matching.Requests.Pass:incoming-interest#2
 
 Authored path: `Matching.Requests.Pass`.
-- Covered by [Matching](../design/compositions/Matching.md), line 73.
-- Covered by [Matching](../design/compositions/Matching.md), line 85.
+- Covered by [Matching](../design/compositions/Matching.md), line 75.
+- Covered by [Matching](../design/compositions/Matching.md), line 87.
 
 ```reaction
 when Sessioning.current (now: time, session, subject: user), asked by Matching.Requests.Pass
@@ -462,8 +672,8 @@ then
 ### Matching.Requests.Pass:incoming-interest#3
 
 Authored path: `Matching.Requests.Pass`.
-- Covered by [Matching](../design/compositions/Matching.md), line 73.
-- Covered by [Matching](../design/compositions/Matching.md), line 85.
+- Covered by [Matching](../design/compositions/Matching.md), line 75.
+- Covered by [Matching](../design/compositions/Matching.md), line 87.
 
 ```reaction
 when MutualMatching.pass (from: user, to: other), asked by Matching.Requests.Pass:incoming-interest#2
@@ -476,8 +686,8 @@ then
 ### Matching.Requests.Pass:no-incoming-interest#2
 
 Authored path: `Matching.Requests.Pass`.
-- Covered by [Matching](../design/compositions/Matching.md), line 73.
-- Covered by [Matching](../design/compositions/Matching.md), line 85.
+- Covered by [Matching](../design/compositions/Matching.md), line 75.
+- Covered by [Matching](../design/compositions/Matching.md), line 87.
 
 ```reaction
 when Sessioning.current (now: time, session, subject: user), asked by Matching.Requests.Pass
@@ -491,8 +701,8 @@ then
 ### Matching.Requests.ShowInterest
 
 Authored path: `Matching.Requests.ShowInterest`.
-- Covered by [Matching](../design/compositions/Matching.md), line 29.
-- Covered by [Matching](../design/compositions/Matching.md), line 61.
+- Covered by [Matching](../design/compositions/Matching.md), line 28.
+- Covered by [Matching](../design/compositions/Matching.md), line 63.
 
 ```reaction
 when RequestBoundary.request (other, path: "/matching/show-interest", requestId, session)
@@ -505,8 +715,8 @@ then
 ### Matching.Requests.ShowInterest#2
 
 Authored path: `Matching.Requests.ShowInterest`.
-- Covered by [Matching](../design/compositions/Matching.md), line 29.
-- Covered by [Matching](../design/compositions/Matching.md), line 61.
+- Covered by [Matching](../design/compositions/Matching.md), line 28.
+- Covered by [Matching](../design/compositions/Matching.md), line 63.
 
 ```reaction
 when Sessioning.current (now: time, session, subject: user), asked by Matching.Requests.ShowInterest
@@ -519,11 +729,12 @@ then
 ### Matching.Requests.ShowInterest:interest-after-pass#3
 
 Authored path: `Matching.Requests.ShowInterest`.
-- Covered by [Matching](../design/compositions/Matching.md), line 29.
-- Covered by [Matching](../design/compositions/Matching.md), line 61.
+- Covered by [Matching](../design/compositions/Matching.md), line 28.
+- Covered by [Matching](../design/compositions/Matching.md), line 63.
 
 ```reaction
 when MutualMatching.showInterest (from: user, to: other, matched), asked by Matching.Requests.ShowInterest#2
+at the flow's settlement frontier
 where
   matched is among [false]
   MutualMatching._decision (from: other, to: user) has (status: "PASSED")
@@ -535,8 +746,8 @@ then
 ### Matching.Requests.ShowInterest:interest-after-pass#4
 
 Authored path: `Matching.Requests.ShowInterest`.
-- Covered by [Matching](../design/compositions/Matching.md), line 29.
-- Covered by [Matching](../design/compositions/Matching.md), line 61.
+- Covered by [Matching](../design/compositions/Matching.md), line 28.
+- Covered by [Matching](../design/compositions/Matching.md), line 63.
 
 ```reaction
 when RequestBoundary.respond (matched, requestId), asked by Matching.Requests.ShowInterest:interest-after-pass#3
@@ -552,8 +763,8 @@ then
 ### Matching.Requests.ShowInterest:interest-after-pass#5
 
 Authored path: `Matching.Requests.ShowInterest`.
-- Covered by [Matching](../design/compositions/Matching.md), line 29.
-- Covered by [Matching](../design/compositions/Matching.md), line 61.
+- Covered by [Matching](../design/compositions/Matching.md), line 28.
+- Covered by [Matching](../design/compositions/Matching.md), line 63.
 
 ```reaction
 when Notifying.notify (createdAt: time, link: otherLink, message: "It's a match!", recipient: other), asked by Matching.Requests.ShowInterest:interest-after-pass#4
@@ -567,11 +778,12 @@ then
 ### Matching.Requests.ShowInterest:interest-notifies-other#3
 
 Authored path: `Matching.Requests.ShowInterest`.
-- Covered by [Matching](../design/compositions/Matching.md), line 29.
-- Covered by [Matching](../design/compositions/Matching.md), line 61.
+- Covered by [Matching](../design/compositions/Matching.md), line 28.
+- Covered by [Matching](../design/compositions/Matching.md), line 63.
 
 ```reaction
 when MutualMatching.showInterest (from: user, to: other, matched), asked by Matching.Requests.ShowInterest#2
+at the flow's settlement frontier
 where
   matched is among [false]
   no MutualMatching._decision (from: other, to: user) has (status: "PASSED")
@@ -584,8 +796,8 @@ then
 ### Matching.Requests.ShowInterest:interest-notifies-other#4
 
 Authored path: `Matching.Requests.ShowInterest`.
-- Covered by [Matching](../design/compositions/Matching.md), line 29.
-- Covered by [Matching](../design/compositions/Matching.md), line 61.
+- Covered by [Matching](../design/compositions/Matching.md), line 28.
+- Covered by [Matching](../design/compositions/Matching.md), line 63.
 
 ```reaction
 when Notifying.notify (createdAt: time, link: profile, message: "Someone is interested in you!", recipient: other), asked by Matching.Requests.ShowInterest:interest-notifies-other#3
@@ -599,8 +811,8 @@ then
 ### Matching.Requests.ShowInterest:interest-notifies-other#5
 
 Authored path: `Matching.Requests.ShowInterest`.
-- Covered by [Matching](../design/compositions/Matching.md), line 29.
-- Covered by [Matching](../design/compositions/Matching.md), line 61.
+- Covered by [Matching](../design/compositions/Matching.md), line 28.
+- Covered by [Matching](../design/compositions/Matching.md), line 63.
 
 ```reaction
 when RequestBoundary.respond (matched, requestId), asked by Matching.Requests.ShowInterest:interest-notifies-other#4
@@ -616,8 +828,8 @@ then
 ### Matching.Requests.ShowInterest:interest-notifies-other#6
 
 Authored path: `Matching.Requests.ShowInterest`.
-- Covered by [Matching](../design/compositions/Matching.md), line 29.
-- Covered by [Matching](../design/compositions/Matching.md), line 61.
+- Covered by [Matching](../design/compositions/Matching.md), line 28.
+- Covered by [Matching](../design/compositions/Matching.md), line 63.
 
 ```reaction
 when Notifying.notify (createdAt: time, link: otherLink, message: "It's a match!", recipient: other), asked by Matching.Requests.ShowInterest:interest-notifies-other#5
@@ -631,11 +843,12 @@ then
 ### Matching.Requests.ShowInterest:match-notifies-session-user#3
 
 Authored path: `Matching.Requests.ShowInterest`.
-- Covered by [Matching](../design/compositions/Matching.md), line 29.
-- Covered by [Matching](../design/compositions/Matching.md), line 61.
+- Covered by [Matching](../design/compositions/Matching.md), line 28.
+- Covered by [Matching](../design/compositions/Matching.md), line 63.
 
 ```reaction
 when MutualMatching.showInterest (from: user, to: other, matched), asked by Matching.Requests.ShowInterest#2
+at the flow's settlement frontier
 where
   matched is among [true]
   userLink is matchesLink (user)
@@ -647,8 +860,8 @@ then
 ### Matching.Requests.ShowInterest:match-notifies-session-user#4
 
 Authored path: `Matching.Requests.ShowInterest`.
-- Covered by [Matching](../design/compositions/Matching.md), line 29.
-- Covered by [Matching](../design/compositions/Matching.md), line 61.
+- Covered by [Matching](../design/compositions/Matching.md), line 28.
+- Covered by [Matching](../design/compositions/Matching.md), line 63.
 
 ```reaction
 when Notifying.notify (createdAt: time, link: userLink, message: "It's a match!", recipient: user), asked by Matching.Requests.ShowInterest:match-notifies-session-user#3
@@ -663,8 +876,8 @@ then
 ### Matching.Requests.ShowInterest:match-notifies-session-user#5
 
 Authored path: `Matching.Requests.ShowInterest`.
-- Covered by [Matching](../design/compositions/Matching.md), line 29.
-- Covered by [Matching](../design/compositions/Matching.md), line 61.
+- Covered by [Matching](../design/compositions/Matching.md), line 28.
+- Covered by [Matching](../design/compositions/Matching.md), line 63.
 
 ```reaction
 when Notifying.notify (createdAt: time, link: otherLink, message: "It's a match!", recipient: other), asked by Matching.Requests.ShowInterest:match-notifies-session-user#4
@@ -678,8 +891,8 @@ then
 ### Matching.Requests.Unmatch
 
 Authored path: `Matching.Requests.Unmatch`.
-- Covered by [Matching](../design/compositions/Matching.md), line 90.
-- Covered by [Matching](../design/compositions/Matching.md), line 101.
+- Covered by [Matching](../design/compositions/Matching.md), line 92.
+- Covered by [Matching](../design/compositions/Matching.md), line 104.
 
 ```reaction
 when RequestBoundary.request (other, path: "/matching/unmatch", requestId, session)
@@ -692,8 +905,8 @@ then
 ### Matching.Requests.Unmatch#2
 
 Authored path: `Matching.Requests.Unmatch`.
-- Covered by [Matching](../design/compositions/Matching.md), line 90.
-- Covered by [Matching](../design/compositions/Matching.md), line 101.
+- Covered by [Matching](../design/compositions/Matching.md), line 92.
+- Covered by [Matching](../design/compositions/Matching.md), line 104.
 
 ```reaction
 when Sessioning.current (now: time, session, subject: user), asked by Matching.Requests.Unmatch
@@ -706,11 +919,12 @@ then
 ### Matching.Requests.Unmatch#3
 
 Authored path: `Matching.Requests.Unmatch`.
-- Covered by [Matching](../design/compositions/Matching.md), line 90.
-- Covered by [Matching](../design/compositions/Matching.md), line 101.
+- Covered by [Matching](../design/compositions/Matching.md), line 92.
+- Covered by [Matching](../design/compositions/Matching.md), line 104.
 
 ```reaction
 when MutualMatching.unmatch (other, user), asked by Matching.Requests.Unmatch#2
+at the flow's settlement frontier
 where
   earlier, RequestBoundary.request (other, path: "/matching/unmatch", requestId, session)
 then
@@ -860,8 +1074,8 @@ then
 ### Profiles.Reads.Mine
 
 Authored path: `Profiles.Reads.Mine`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 108.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 114.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 110.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 116.
 
 ```reaction
 when RequestBoundary.request (path: "/profiles/mine", requestId, session)
@@ -874,8 +1088,8 @@ then
 ### Profiles.Reads.Mine:has-profile#2
 
 Authored path: `Profiles.Reads.Mine`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 108.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 114.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 110.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 116.
 
 ```reaction
 when Sessioning.current (now: time, session, subject: user), asked by Profiles.Reads.Mine
@@ -890,8 +1104,8 @@ then
 ### Profiles.Reads.Mine:no-profile#2
 
 Authored path: `Profiles.Reads.Mine`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 108.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 114.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 110.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 116.
 
 ```reaction
 when Sessioning.current (now: time, session, subject: user), asked by Profiles.Reads.Mine
@@ -989,8 +1203,8 @@ then
 ### Profiles.Requests.Create
 
 Authored path: `Profiles.Requests.Create`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 57.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 65.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 59.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 67.
 
 ```reaction
 when RequestBoundary.request (availability, experience, graduationYear, interests, latitude, location, longitude, major, name, path: "/profiles/create", requestId, role, session, skills, university)
@@ -1003,8 +1217,8 @@ then
 ### Profiles.Requests.Create#2
 
 Authored path: `Profiles.Requests.Create`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 57.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 65.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 59.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 67.
 
 ```reaction
 when Sessioning.current (now: time, session, subject: user), asked by Profiles.Requests.Create
@@ -1017,8 +1231,8 @@ then
 ### Profiles.Requests.Create#3
 
 Authored path: `Profiles.Requests.Create`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 57.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 65.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 59.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 67.
 
 ```reaction
 when ProfileSetting.createProfile (availability, experience, graduationYear, interests, latitude, location, longitude, major, name, role, skills, university, user, profile), asked by Profiles.Requests.Create#2
@@ -1031,8 +1245,8 @@ then
 ### Profiles.Requests.Publish
 
 Authored path: `Profiles.Requests.Publish`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 95.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 103.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 97.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 105.
 
 ```reaction
 when RequestBoundary.request (path: "/profiles/publish", requestId, session)
@@ -1045,8 +1259,8 @@ then
 ### Profiles.Requests.Publish#2
 
 Authored path: `Profiles.Requests.Publish`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 95.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 103.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 97.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 105.
 
 ```reaction
 when Sessioning.current (now: time, session, subject: user), asked by Profiles.Requests.Publish
@@ -1057,8 +1271,8 @@ then
 ### Profiles.Requests.Publish#3
 
 Authored path: `Profiles.Requests.Publish`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 95.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 103.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 97.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 105.
 
 ```reaction
 when ProfileSetting.publishProfile (user), asked by Profiles.Requests.Publish#2
@@ -1072,8 +1286,8 @@ then
 ### Profiles.Requests.SetPitch
 
 Authored path: `Profiles.Requests.SetPitch`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 83.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 90.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 85.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 92.
 
 ```reaction
 when RequestBoundary.request (path: "/profiles/set-pitch", pitch, requestId, session)
@@ -1086,8 +1300,8 @@ then
 ### Profiles.Requests.SetPitch#2
 
 Authored path: `Profiles.Requests.SetPitch`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 83.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 90.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 85.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 92.
 
 ```reaction
 when Sessioning.current (now: time, session, subject: user), asked by Profiles.Requests.SetPitch
@@ -1100,8 +1314,8 @@ then
 ### Profiles.Requests.SetPitch#3
 
 Authored path: `Profiles.Requests.SetPitch`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 83.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 90.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 85.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 92.
 
 ```reaction
 when ProfileSetting.setStartupPitch (pitch, user), asked by Profiles.Requests.SetPitch#2
@@ -1115,8 +1329,8 @@ then
 ### Profiles.Requests.Update
 
 Authored path: `Profiles.Requests.Update`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 70.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 78.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 72.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 80.
 
 ```reaction
 when RequestBoundary.request (availability, experience, graduationYear, interests, latitude, location, longitude, major, name, path: "/profiles/update", requestId, session, skills, university)
@@ -1129,8 +1343,8 @@ then
 ### Profiles.Requests.Update#2
 
 Authored path: `Profiles.Requests.Update`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 70.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 78.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 72.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 80.
 
 ```reaction
 when Sessioning.current (now: time, session, subject: user), asked by Profiles.Requests.Update
@@ -1143,8 +1357,8 @@ then
 ### Profiles.Requests.Update#3
 
 Authored path: `Profiles.Requests.Update`.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 70.
-- Covered by [Profiles](../design/compositions/Profiles.md), line 78.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 72.
+- Covered by [Profiles](../design/compositions/Profiles.md), line 80.
 
 ```reaction
 when ProfileSetting.updateProfile (availability, experience, graduationYear, interests, latitude, location, longitude, major, name, skills, university, user), asked by Profiles.Requests.Update#2
@@ -1442,6 +1656,34 @@ then
   RequestBoundary.respond (requestId, saved: true)
 ```
 
+### Recommendations.Unmatching.PassBack
+
+Authored path: `Recommendations.Unmatching.PassBack`.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 79.
+
+```reaction
+when MutualMatching.unmatch (other, user)
+where
+  Recommending._recommendation (candidate: user, viewer: other) has (status)
+  status is among ["AVAILABLE", "SEE_LATER", "INTERESTED"]
+then
+  Recommending.markPassed (candidate: user, viewer: other)
+```
+
+### Recommendations.Unmatching.PassForward
+
+Authored path: `Recommendations.Unmatching.PassForward`.
+- Covered by [Recommendations](../design/compositions/Recommendations.md), line 78.
+
+```reaction
+when MutualMatching.unmatch (other, user)
+where
+  Recommending._recommendation (candidate: other, viewer: user) has (status)
+  status is among ["AVAILABLE", "SEE_LATER", "INTERESTED"]
+then
+  Recommending.markPassed (candidate: other, viewer: user)
+```
+
 ## Endpoint input contracts
 
 Before recording an action ask, the boundary rejects a body that is not an
@@ -1452,6 +1694,9 @@ not listed here have no explicit input contract.
 - `/accounts/register` — requires `username`, `password`
 - `/accounts/sign-in` — requires `username`, `password`
 - `/accounts/sign-out` — fills `session` with "" when absent
+- `/chats/list` — fills `session` with "" when absent
+- `/chats/messages` — requires `conversation`; fills `session` with "" when absent
+- `/chats/send` — requires `conversation`, `content`; fills `session` with "" when absent
 - `/matching/interested-in-you` — fills `session` with "" when absent
 - `/matching/matches` — fills `session` with "" when absent
 - `/matching/pass` — requires `other`; fills `session` with "" when absent

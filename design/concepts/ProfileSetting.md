@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Let each person present one profile, as a founder or as a builder, that others can
+Let each person present one profile, as a founder, as a builder, or as both, that others can
 discover once it is complete and published. A profile is a self-description that its owner
 controls, not a record that other people edit, rate, or annotate.
 
@@ -11,10 +11,11 @@ controls, not a record that other people edit, rate, or annotate.
 Keti creates a builder profile with her name "Keti A", university MIT, skill "software
 engineering", interest "data tools", location "MIT campus" at 42.36, -71.09, and 10 hours a
 week of availability. It starts hidden. She publishes it, and it becomes visible. Bumba
-creates a founder profile, but publishing it is refused until he sets the startup pitch
-"A data tool for solo travelers". After that he publishes. Later Keti adds the skill
-"data engineering" with an update; her role, visibility, and lack of a pitch stay as they
-were. An update that would empty the skills of her visible profile is refused.
+creates a profile that is both a founder and a builder. Like Keti, he enters his builder information,
+but is barred from publishing his profile until he sets a startup pitch because he is also a founder.
+He sets a pitch, "A data tool for solo travelers". After that he publishes his profile.
+Later Keti adds the skill "data engineering" with an update; her role, visibility, and lack of a
+pitch stay as they were. An update that would empty the skills of her visible profile is refused.
 
 ## Types
 
@@ -23,8 +24,8 @@ external User
   The opaque identity of the person who owns a profile.
 opaque Entries
   A finite list of text entries, such as skills or interests, exactly as supplied.
-Role is FOUNDER or BUILDER
-  Whether the person is a founder seeking teammates or a builder seeking a startup.
+Role is FOUNDER or BUILDER or BOTH
+  Whether the person is a founder seeking teammates or a builder seeking a startup, or both.
 ```
 
 ## State
@@ -48,12 +49,13 @@ a seq of Profiles with
   a visible Flag
 
 Rule: A User has at most one Profile, and its role never changes after creation.
-Rule: Only a Profile whose role is FOUNDER has a startupPitch, and a present startupPitch is nonempty.
+Rule: Only a Profile whose role is FOUNDER or BOTH has a startupPitch, and a present startupPitch is nonempty.
+Rule: Two roles are complementary when one of them is FOUNDER or BOTH and the other is BUILDER or BOTH; FOUNDER with FOUNDER and BUILDER with BUILDER are not complementary.
 Rule: graduationYear is a positive whole number; availability, in hours per week, is a nonnegative number.
 Rule: latitude is between -90 and 90 and longitude is between -180 and 180, inclusive, in degrees, even while the Profile is hidden.
 Rule: Every skills and interests entry is nonempty after trimming leading and trailing whitespace; entries are stored exactly as supplied, without trimming or removing duplicates.
 Rule: Text containing only whitespace counts as empty.
-Rule: A Profile is complete when its name and location are nonempty, its skills and its interests each have at least one entry, and, when its role is FOUNDER, its startupPitch is present.
+Rule: A Profile is complete when its name and location are nonempty, its skills and its interests each have at least one entry, and, when its role is FOUNDER or BOTH, its startupPitch is present.
 Rule: Every visible Profile is complete.
 Rule: Profiles are kept in creation order.
 Rule: The profile data is invalid when graduationYear is not a positive whole number, latitude or longitude is out of range, availability is negative, or any skills or interests entry is empty after trimming.
@@ -83,10 +85,10 @@ setStartupPitch (user: User, pitch: String) : returns ()
   where the Profile with owner user has role BUILDER
   then
     refuses PITCH_NOT_FOUNDER "Only founders can have a startup pitch."
-  where the Profile with owner user has role FOUNDER and pitch is empty
+  where the Profile with owner user has role FOUNDER or BOTH and pitch is empty
   then
     refuses EMPTY_PITCH "A startup pitch must not be empty."
-  where the Profile with owner user has role FOUNDER and pitch is not empty
+  where the Profile with owner user has role FOUNDER or BOTH and pitch is not empty
   then
     set that Profile's startupPitch to pitch
     returns
@@ -146,7 +148,7 @@ _recommendationData (user: User) : optional (role: Role, visible: Flag, skills: 
   answers no row when user has no Profile, including for an unknown user
 
 _visibleCandidates (user: User) : many (candidate: User, skills: Entries, interests: Entries, university: String, latitude: Number, longitude: Number, availability: Number)
-  answers the owner and recommendation data of each visible Profile whose role differs from the role of user's Profile
+  answers the owner and recommendation data of each visible Profile, other than user's own, whose role is complementary to the role of user's Profile
   answers no rows when user has no Profile, including for an unknown user, or when no such Profile is visible
   orders rows by Profile creation order, oldest first
 ```

@@ -30,7 +30,7 @@ After the preferences are saved, a successful Recommending `setPreferences`
 (Reaction 2) as an internal reaction. It reads ProfileSetting `_recommendationData` again,
 rather than reusing the guard read, and only when that fresh read shows the profile visible
 does it run the recommendation refresh described in Profiles: both directions for every
-visible candidate with the opposite role, so the new preferences change the user's scores
+visible candidate with a complementary role, so the new preferences change the user's scores
 for others and others' scores for the user (through the skills factor). A hidden profile
 refreshes nothing until it is published. The endpoint answers success only after its flow
 settles, after every refresh has completed; that answer is disjoint from
@@ -71,10 +71,27 @@ Reading changes no state.
 Recommendations.Reads.Feed at /recommendations/feed
 ```
 
+## Leaving feeds after unmatching
+
+When MutualMatching `unmatch` succeeds (Reaction 10, Recommending half), two internal
+reactions remove the pair from each other's feeds, one per direction:
+[the unmatching user's recommendation of the other](reaction:Recommendations.Unmatching.PassForward)
+and [the other's recommendation of the unmatching user](reaction:Recommendations.Unmatching.PassBack).
+Each reads Recommending `_recommendation` for its direction and, only when one exists and
+is not already PASSED, calls Recommending `markPassed`. A direction with no recommendation,
+for example because a profile was never published, is skipped rather than refused.
+
+Unmatching sets both MutualMatching decisions to PASSED, so neither person can show
+interest again; marking the recommendations PASSED keeps the feed from offering a person
+the app would refuse. A later refresh keeps the PASSED status, so they do not return.
+Unmatch answers only after its flow settles, so both feeds are already updated when the
+endpoint reports success. The marking is best-effort like the other reactions: the unmatch
+stays if `markPassed` faults.
+
 ## Deferred
 
 - Reaction 4 (`markInterested` after Show Interest), Reaction 5 (`markPassed` after a pass),
-  passing from the feed, and the Recommending half of Reaction 10 (unmatch).
+  and passing from the feed.
 - See Later and Begin Browsing (`seeLater`, `startNewSession`) endpoints.
 - Reaction 3 (deactivating recommendations on hide), awaiting a hide endpoint.
 

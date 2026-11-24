@@ -8,7 +8,8 @@ project; product spec in `documentation/concept-design.md`.
 
 ```bash
 bun install
-bun test                 # concept unit tests + HTTP integration tests (in-memory)
+bun run db:up            # start MongoDB (podman compose); needed by bun test and the app
+bun test                 # concept unit tests + HTTP integration tests (fresh Mongo DB per test)
 bun run check            # sync-engine source/config check + artifacts check + tsc
 bun run check:design     # authored design grammar check
 bun run generate         # regenerate generated/ (after design, composition or HTTP policy changes)
@@ -37,7 +38,7 @@ which do not exist yet.
 ## Status (as of 2026-11-23)
 
 Implemented: MutualMatching, Notifying, Authenticating, Sessioning, ProfileSetting,
-Recommending. Endpoints:
+Recommending, Chatting. Endpoints:
 
 - `/accounts/register`, `/accounts/sign-in`, `/accounts/sign-out`
 - `/matching/show-interest`, `/matching/pass`, `/matching/unmatch`,
@@ -47,6 +48,7 @@ Recommending. Endpoints:
 - `/profiles/create`, `/profiles/update`, `/profiles/set-pitch`, `/profiles/publish`,
   `/profiles/mine`
 - `/recommendations/set-preferences`, `/recommendations/preferences`, `/recommendations/feed`
+- `/chats/list`, `/chats/messages`, `/chats/send`
 
 Reactions 1 and 2 (create/update recommendations) are internal reactions in the
 `Refreshing` groups of `src/compositions/Profiles.ts` and `Recommendations.ts`; triggering
@@ -55,19 +57,26 @@ fan-out never answers when the candidate read is empty. Profiles carry an
 `availability` (hours/week) field the prose design omits. Work item:
 `.sync-engine/work/recommending/`.
 
+Chatting reactions live in `Reacting` in `src/compositions/Chatting.ts`: Reaction 7 opens a
+conversation when `showInterest` creates a match, Reaction 9 notifies the other participant
+of a new message, and the Chatting half of Reaction 10 closes the conversation on unmatch.
+The Recommending half of Reaction 10 is `Unmatching` in `src/compositions/Recommendations.ts`:
+one reaction per direction marks an existing, not-yet-PASSED recommendation PASSED.
+Show Interest and Unmatch answer `.afterFlowSettles()` so those reactions have run.
+
 All endpoints take POST JSON. Every endpoint except register and sign-in takes `session`;
 the acting user always comes from the session, never from the request body.
 
 Not yet implemented (deliberately documented as deferred in `design/compositions/Matching.md`):
 
-- Chatting concept.
-- The ProfileSetting guard on show interest (visible profiles, opposite roles), which will
+- The ProfileSetting guard on show interest (visible profiles, complementary roles), which will
   also stop interest in nonexistent accounts, and the sender's name in interest notifications.
 - `/profiles/hide` and Reaction 3; viewing other people's profiles; See Later and Begin
   Browsing endpoints.
-- Reactions 4, 5 (Recommending), 7, 9 (Chatting) and both halves of 10.
-- Persistence: all state is in memory and is lost on restart. `src/db.ts` (MongoDB) is not
-  wired in.
+- Reactions 4 and 5.
+- Persistence for everything except Chatting: those concepts are in memory and lose state on
+  restart. Chatting stores `chatting.conversations` and `chatting.messages` in MongoDB via
+  `src/db.ts`; `assembleApplication({ database })` overrides the database.
 
 ## Conventions and decisions
 

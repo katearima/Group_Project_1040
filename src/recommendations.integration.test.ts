@@ -1,5 +1,6 @@
-import { beforeEach, describe, expect, test } from "bun:test";
+import { afterAll, beforeEach, describe, expect, test } from "bun:test";
 import { createApplicationHttpHandler } from "./main.ts";
+import { dropTestDatabases, freshTestDatabase } from "./test-database.ts";
 
 /**
  * Black-box tests for profiles, preferences, and the recommendation feed (Reactions 1 and
@@ -12,8 +13,10 @@ type Json = Record<string, any>;
 let handler: Handler;
 
 beforeEach(() => {
-  handler = createApplicationHttpHandler();
+  handler = createApplicationHttpHandler({ database: freshTestDatabase() });
 });
+
+afterAll(dropTestDatabases);
 
 async function post(path: string, body: unknown): Promise<{ status: number; body: Json }> {
   const response = await handler(
@@ -358,5 +361,47 @@ describe("preferences", () => {
       distance: 0,
     });
     expect(await feedOf(keti)).toEqual([{ user: "bumba", score: 0.8 }]);
+  });
+});
+
+describe("Reaction 10: unmatching removes the pair from each other's feeds", () => {
+  test("after an unmatch, neither feed offers the other person, even after a refresh", async () => {
+    const { keti, bumba } = await ketiAndBumba();
+    const ana = await register("ana");
+    await ok("/profiles/create", {
+      session: ana,
+      role: "BUILDER",
+      ...profile({ name: "Ana C", interests: ["robots"] }),
+    });
+    for (const session of [keti, bumba, ana]) await ok("/profiles/publish", { session });
+    expect((await feedOf(bumba)).map((row) => row.user).sort()).toEqual(["ana", "keti"]);
+
+    await ok("/matching/show-interest", { session: keti, other: "bumba" });
+    await ok("/matching/show-interest", { session: bumba, other: "keti" });
+    await ok("/matching/unmatch", { session: keti, other: "bumba" });
+
+    expect(await feedOf(keti)).toEqual([]);
+    expect((await feedOf(bumba)).map((row) => row.user)).toEqual(["ana"]);
+
+    // A refresh recalculates scores but keeps the PASSED status.
+    await ok("/recommendations/set-preferences", {
+      session: bumba,
+      skills: ["software engineering"],
+      interests: [],
+      universities: [],
+    });
+    expect(await feedOf(keti)).toEqual([]);
+    expect((await feedOf(bumba)).map((row) => row.user)).toEqual(["ana"]);
+  });
+
+  test("unmatching a pair without recommendations still succeeds", async () => {
+    const keti = await register("keti");
+    const bumba = await register("bumba");
+    await ok("/matching/show-interest", { session: keti, other: "bumba" });
+    await ok("/matching/show-interest", { session: bumba, other: "keti" });
+    expect(await ok("/matching/unmatch", { session: bumba, other: "keti" })).toEqual({
+      unmatched: true,
+    });
+    expect(await feedOf(keti)).toEqual([]);
   });
 });

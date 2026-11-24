@@ -3,7 +3,7 @@
 Every person in the application is identified by the Account that Authenticating
 established. A session's subject, the users of MutualMatching, and the recipients of
 Notifying are all that same Account identity, so the signed-in user resolved from a session
-is directly the user who decides, matches, and receives notifications. Callers never supply
+is directly the user who decides, matches, chats, and receives notifications. Callers never supply
 their own identity.
 
 ```instances
@@ -22,6 +22,9 @@ instantiate ProfileSetting with
   User is Authenticating.Account
 
 instantiate Recommending with
+  User is Authenticating.Account
+
+instantiate Chatting with
   User is Authenticating.Account
 ```
 

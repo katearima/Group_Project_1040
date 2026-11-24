@@ -47,6 +47,47 @@ export type AppWire = {
     };
     error: { error: AppWideError | "INVALID_INPUT" | "UNKNOWN_SESSION" };
   };
+  "/chats/list": {
+    input: {
+      "session"?: Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
+    };
+    output: {
+      "conversations": {
+        "conversation": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Chatting"]["_getConversations"]>>>, ["conversation"]>>;
+        "other": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Chatting"]["_getConversations"]>>>, ["other"]>>;
+        "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Chatting"]["_getConversations"]>>>, ["status"]>>;
+      }[];
+    };
+    error: { error: AppWideError | "INVALID_INPUT" | "UNKNOWN_SESSION" };
+  };
+  "/chats/messages": {
+    input: {
+      "conversation": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Chatting"]["_isParticipant"]>[0], ["conversation"]>>;
+      "session"?: Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
+    };
+    output: {
+      "messages": {
+        "content": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Chatting"]["_getMessages"]>>>, ["content"]>>;
+        "message": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Chatting"]["_getMessages"]>>>, ["message"]>>;
+        "sender": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Chatting"]["_getMessages"]>>>, ["sender"]>>;
+        "sentAt": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Chatting"]["_getMessages"]>>>, ["sentAt"]>>;
+      }[];
+      "other": Jsonify<AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Chatting"]["_conversationBetween"]>[0], ["other"]>, AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Chatting"]["_otherParticipant"]>>>, ["other"]>]>>;
+      "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Chatting"]["_conversationBetween"]>>>, ["status"]>>;
+    };
+    error: { error: AppWideError | "CONVERSATION_NOT_FOUND" | "INVALID_INPUT" | "UNKNOWN_SESSION" };
+  };
+  "/chats/send": {
+    input: {
+      "content": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Chatting"]["sendMessage"]>[0], ["content"]>>;
+      "conversation": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Chatting"]["sendMessage"]>[0], ["conversation"]>>;
+      "session"?: Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
+    };
+    output: {
+      "message": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Chatting"]["sendMessage"]>>, ["message"]>>;
+    };
+    error: { error: AppWideError | "CONVERSATION_CLOSED" | "CONVERSATION_NOT_FOUND" | "EMPTY_MESSAGE" | "INVALID_INPUT" | "UNKNOWN_SESSION" };
+  };
   "/matching/interested-in-you": {
     input: {
       "session"?: Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
@@ -91,7 +132,7 @@ export type AppWire = {
     } | {
       "matched": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["MutualMatching"]["showInterest"]>>, ["matched"]>>;
     };
-    error: { error: AppWideError | "EMPTY_MESSAGE" | "INTEREST_ALREADY_DECIDED" | "INTEREST_ALREADY_MATCHED" | "INTEREST_IN_SELF" | "INVALID_INPUT" | "UNKNOWN_SESSION" };
+    error: { error: AppWideError | "CONVERSATION_EXISTS" | "CONVERSATION_WITH_SELF" | "EMPTY_MESSAGE" | "INTEREST_ALREADY_DECIDED" | "INTEREST_ALREADY_MATCHED" | "INTEREST_IN_SELF" | "INVALID_INPUT" | "UNKNOWN_SESSION" };
   };
   "/matching/unmatch": {
     input: {
@@ -101,7 +142,7 @@ export type AppWire = {
     output: {
       "unmatched": true;
     };
-    error: { error: AppWideError | "INVALID_INPUT" | "NOT_MATCHED" | "UNKNOWN_SESSION" };
+    error: { error: AppWideError | "CLOSE_TARGET_NOT_FOUND" | "CONVERSATION_ALREADY_CLOSED" | "INVALID_INPUT" | "NOT_MATCHED" | "PASS_RECOMMENDATION_NOT_FOUND" | "UNKNOWN_SESSION" };
   };
   "/notifications/dismiss": {
     input: {
@@ -318,6 +359,47 @@ export type AppWireHttp = {
     };
     error: { error: HttpAppWideError | "INVALID_REQUEST" | "UNAUTHORIZED" };
   };
+  "/chats/list": {
+    input: {
+      "session"?: Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
+    };
+    output: {
+      "conversations": {
+        "conversation": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Chatting"]["_getConversations"]>>>, ["conversation"]>>;
+        "other": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Chatting"]["_getConversations"]>>>, ["other"]>>;
+        "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Chatting"]["_getConversations"]>>>, ["status"]>>;
+      }[];
+    };
+    error: { error: HttpAppWideError | "INVALID_REQUEST" | "UNAUTHORIZED" };
+  };
+  "/chats/messages": {
+    input: {
+      "conversation": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Chatting"]["_isParticipant"]>[0], ["conversation"]>>;
+      "session"?: Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
+    };
+    output: {
+      "messages": {
+        "content": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Chatting"]["_getMessages"]>>>, ["content"]>>;
+        "message": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Chatting"]["_getMessages"]>>>, ["message"]>>;
+        "sender": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Chatting"]["_getMessages"]>>>, ["sender"]>>;
+        "sentAt": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Chatting"]["_getMessages"]>>>, ["sentAt"]>>;
+      }[];
+      "other": Jsonify<AllOf<[AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Chatting"]["_conversationBetween"]>[0], ["other"]>, AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Chatting"]["_otherParticipant"]>>>, ["other"]>]>>;
+      "status": Jsonify<AtPath<QueryRow<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Chatting"]["_conversationBetween"]>>>, ["status"]>>;
+    };
+    error: { error: HttpAppWideError | "INVALID_REQUEST" | "NOT_FOUND" | "UNAUTHORIZED" };
+  };
+  "/chats/send": {
+    input: {
+      "content": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Chatting"]["sendMessage"]>[0], ["content"]>>;
+      "conversation": Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Chatting"]["sendMessage"]>[0], ["conversation"]>>;
+      "session"?: Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
+    };
+    output: {
+      "message": Jsonify<AtPath<Awaited<ReturnType<(typeof ApplicationConceptSet.concepts)["Chatting"]["sendMessage"]>>, ["message"]>>;
+    };
+    error: { error: HttpAppWideError | "CONFLICT" | "INVALID_REQUEST" | "NOT_FOUND" | "UNAUTHORIZED" };
+  };
   "/matching/interested-in-you": {
     input: {
       "session"?: Jsonify<AtPath<Parameters<(typeof ApplicationConceptSet.concepts)["Sessioning"]["current"]>[0], ["session"]>>;
@@ -372,7 +454,7 @@ export type AppWireHttp = {
     output: {
       "unmatched": true;
     };
-    error: { error: HttpAppWideError | "INVALID_REQUEST" | "NOT_FOUND" | "UNAUTHORIZED" };
+    error: { error: HttpAppWideError | "CONFLICT" | "INVALID_REQUEST" | "NOT_FOUND" | "UNAUTHORIZED" };
   };
   "/notifications/dismiss": {
     input: {

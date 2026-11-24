@@ -1,5 +1,6 @@
-import { beforeEach, describe, expect, test } from "bun:test";
+import { afterAll, beforeEach, describe, expect, test } from "bun:test";
 import { createApplicationHttpHandler } from "./main.ts";
+import { dropTestDatabases, freshTestDatabase } from "./test-database.ts";
 
 /**
  * Black-box tests that drive the assembled application through the
@@ -18,8 +19,10 @@ interface Reply {
 let handler: Handler;
 
 beforeEach(() => {
-  handler = createApplicationHttpHandler();
+  handler = createApplicationHttpHandler({ database: freshTestDatabase() });
 });
+
+afterAll(dropTestDatabases);
 
 async function post(path: string, body: unknown): Promise<Reply> {
   const response = await handler(

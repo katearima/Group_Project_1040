@@ -10,8 +10,8 @@ Notifying `markAsRead` and `dismissNotification` check ownership atomically with
 change, using the session user and requested notification identity. Missing notifications
 and those belonging to someone else receive identical refusals, concealing their existence.
 
-New-message notifications (Reaction 9) and sender names in interest notifications await
-Chatting and ProfileSetting.
+New-message notifications (Reaction 9) are created by Chatting. Sender names in interest
+notifications await ProfileSetting.
 
 ## List notifications
 

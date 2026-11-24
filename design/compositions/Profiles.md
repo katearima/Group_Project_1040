@@ -21,7 +21,8 @@ Recommendations triggers the same refresh after saved preferences. A refused act
 triggers nothing. After its trigger, the reaction reads ProfileSetting
 `_recommendationData` for that user fresh. Only when that profile is
 visible does it read ProfileSetting `_visibleCandidates` for the session user: every
-visible profile with the opposite role, oldest first. For each candidate it calls
+visible profile, other than the user's own, with a complementary role (one side FOUNDER or
+BOTH and the other BUILDER or BOTH), oldest first. For each candidate it calls
 Recommending `refreshRecommendation` twice, once with the session user as viewer and once
 with the candidate as viewer, each time passing the viewer's data first and the
 candidate's data second. Recommending scores the pair from that data and its own stored
@@ -30,8 +31,9 @@ existing status.
 
 Each triggering endpoint answers only after its flow settles, that is, after every refresh
 the change caused has completed, including when there is nothing to refresh. A hidden profile refreshes
-nothing; its changes take effect when it is next published. Same-role users never receive
-recommendations for each other because `_visibleCandidates` returns only the opposite role.
+nothing; its changes take effect when it is next published. Two founders, or two builders,
+never receive recommendations for each other because `_visibleCandidates` returns only
+complementary roles; a BOTH profile is a candidate for every other visible profile.
 Profile data that ProfileSetting accepted is always valid recommendation data, and the
 candidates exclude the session user, so the refreshes are not expected to refuse.
 
@@ -80,9 +82,9 @@ Profiles.Requests.Update at /profiles/update
 
 ## Set startup pitch
 
-A signed-in founder may [set their startup pitch](reaction:Profiles.Requests.SetPitch).
+A signed-in founder, whose role is FOUNDER or BOTH, may [set their startup pitch](reaction:Profiles.Requests.SetPitch).
 ProfileSetting `setStartupPitch` refuses a missing profile (`PITCH_PROFILE_NOT_FOUND`), a
-builder (`PITCH_NOT_FOUNDER`), and an empty pitch (`EMPTY_PITCH`). On success the
+BUILDER profile (`PITCH_NOT_FOUNDER`), and an empty pitch (`EMPTY_PITCH`). On success the
 recommendation refresh runs and the endpoint returns success. Pitch text adds no points to
 any score.
 

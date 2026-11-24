@@ -18,6 +18,8 @@ const ShowInterest = endpoint(
         ),
       )
       .then(MutualMatching.showInterest({ from: user, to: other }).responds({ matched }))
+      // Reaction 7 opens the conversation inside this flow; answer after it has run.
+      .afterFlowSettles()
       .then(
         // Reaction 8, first notification: the session user learns of the match.
         where(is.among(matched, [true]), compute(matchesLink, { user }, userLink))
@@ -94,6 +96,8 @@ const Unmatch = endpoint(
     receive({ session, other })
       .then(where(now(time)).then(Sessioning.current({ session, now: time }).responds({ subject: user })))
       .then(MutualMatching.unmatch({ user, other }).responds({}))
+      // Reaction 10 closes the conversation inside this flow; answer after it has run.
+      .afterFlowSettles()
       .then(respond({ unmatched: true })),
   { input: { required: ["other"], defaults: { session: "" } } },
 );
