@@ -16,7 +16,7 @@ Meet the founders and builders you'd want to start something with. Founders find
 
 ## Read more
 
-- [Concept design](documentation/concept-design.md): the five concepts and how they work together
+- [Concept design](documentation/concept-design.md): the five product concepts and how they work together
 - [Concept contracts](design/concepts/) checked by the framework, and the [reactions](design/compositions/) that connect them
 - [Design notes](documentation/design-notes.md): visual study and decisions
 - [Development plan](documentation/development-plan/development-plan.md) and the [Sprint 2 update](documentation/development-plan/sprint-2-summary.md)

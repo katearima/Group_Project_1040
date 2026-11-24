@@ -67,7 +67,7 @@ Reactions 1 and 2 (create/update recommendations) are internal reactions in the
 `Refreshing` groups of `src/compositions/Profiles.ts` and `Recommendations.ts`; triggering
 endpoints answer after the flow settles (`.afterFlowSettles()`), because an endpoint-owned
 fan-out never answers when the candidate read is empty. Profiles carry an
-`availability` (hours/week) field the prose design omits. Work item:
+`availability` (hours/week) field. Work item:
 `.sync-engine/work/recommending/`.
 
 Chatting reactions live in `Reacting` in `src/compositions/Chatting.ts`: Reaction 7 opens a
