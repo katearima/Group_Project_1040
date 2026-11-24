@@ -1,3 +1,4 @@
+import { type Persistence, plain } from "../../../persistence.ts";
 import {
   type AccountRecord,
   type AuthenticatingDependencies,
@@ -23,12 +24,22 @@ export class AuthenticatingMemoryConcept {
   private readonly passwordVerifier: PasswordVerifierStrategy;
   private readonly freshSalt: () => string;
 
+  readonly #persistence: Persistence<{ accounts: AccountRecord[] }> | undefined;
+
   constructor({
     passwordVerifier = argon2idPasswordVerifier,
     freshSalt = securePasswordSalt,
-  }: AuthenticatingDependencies = {}) {
+    persistence,
+  }: AuthenticatingDependencies & { persistence?: Persistence<{ accounts: AccountRecord[] }> } = {}) {
     this.passwordVerifier = passwordVerifier;
     this.freshSalt = freshSalt;
+    this.#persistence = persistence;
+    for (const account of persistence?.initial?.accounts ?? []) this.accounts.set(account.username, account);
+  }
+
+  /** Application-owned addition to the vendored catalog source: saves the accounts after each change. */
+  #changed(): void {
+    this.#persistence?.save({ accounts: plain(this.accounts.values()) });
   }
 
   async register({ username, password }: { username: string; password: string }) {
@@ -39,6 +50,7 @@ export class AuthenticatingMemoryConcept {
     const credential = await this.#createCredential(password);
     if (this.accounts.has(username)) throw new UsernameTaken(USERNAME_TAKEN_DETAIL);
     this.accounts.set(username, { username, ...credential });
+    this.#changed();
     return { account: username };
   }
 
@@ -69,6 +81,7 @@ export class AuthenticatingMemoryConcept {
       throw new InvalidCredentials(INVALID_CREDENTIALS_DETAIL);
     }
     this.accounts.set(username, { username, ...credential });
+    this.#changed();
     return { account: username };
   }
 
@@ -80,6 +93,7 @@ export class AuthenticatingMemoryConcept {
       throw new InvalidCredentials(INVALID_CREDENTIALS_DETAIL);
     }
     this.accounts.delete(username);
+    this.#changed();
     return { account: username };
   }
 
@@ -98,6 +112,7 @@ export class AuthenticatingMemoryConcept {
     const credential = await this.#createCredential(password);
     if (this.accounts.get(account.username) === account) {
       this.accounts.set(account.username, { username: account.username, ...credential });
+      this.#changed();
     }
   }
 }

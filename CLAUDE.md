@@ -87,11 +87,17 @@ Not yet implemented (deliberately documented as deferred in `design/compositions
 - `/profiles/hide` and Reaction 3; viewing other people's profiles; See Later and Begin
   Browsing endpoints.
 - Reactions 4 and 5.
-- Persistence for everything except Chatting: those concepts are in memory and lose state on
-  restart. Chatting stores `chatting.conversations` and `chatting.messages` in MongoDB via
-  `src/db.ts`; `assembleApplication({ database })` overrides the database.
+- Persistence of sessions (deliberately not kept: a restart signs everyone out).
 
 ## Conventions and decisions
+
+- **Persistence.** Chatting stores its rows in MongoDB itself (`src/concepts/Chatting.ts`).
+  Authenticating, ProfileSetting, MutualMatching, Notifying and Recommending keep their logic
+  in memory and take an optional `persistence` (`src/persistence.ts`): after each change they
+  save a snapshot of their whole state to one document in the `state` collection, and
+  `openStores()` in `src/assembly.ts` loads it at startup (`src/main.ts` also flushes on
+  SIGTERM). Without it (unit tests) they stay in memory. Writes are queued, so a crash can lose the
+  last moments; fine at this scale, not for a large user base. Sessions are never saved.
 
 - **Change design before code.** New behavior goes into `design/` first, then
   `bunx --no-install sync-engine check-design design/concepts/*.md design/types.md design/compositions/*.md`,

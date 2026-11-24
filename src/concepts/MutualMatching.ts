@@ -1,3 +1,5 @@
+import { type Persistence, plain } from "../persistence.ts";
+
 export type User = string;
 export type DecisionStatus = "INTERESTED" | "PASSED";
 
@@ -48,6 +50,8 @@ function unorderedKey(a: User, b: User): string {
 export interface MutualMatchingInitialState {
   decisions?: Iterable<DecisionRow>;
   matches?: Iterable<MatchRow>;
+  /** Keeps decisions and matches across restarts; its saved state replaces the two lists above. */
+  persistence?: Persistence<{ decisions: DecisionRow[]; matches: MatchRow[] }>;
 }
 
 export class MutualMatchingConcept {
@@ -58,7 +62,12 @@ export class MutualMatchingConcept {
   #matches: MatchRow[] = [];
   #matchesByPair = new Map<string, MatchRow>();
 
-  constructor({ decisions = [], matches = [] }: MutualMatchingInitialState = {}) {
+  readonly #persistence: Persistence<{ decisions: DecisionRow[]; matches: MatchRow[] }> | undefined;
+
+  constructor({ decisions = [], matches = [], persistence }: MutualMatchingInitialState = {}) {
+    this.#persistence = persistence;
+    decisions = persistence?.initial?.decisions ?? decisions;
+    matches = persistence?.initial?.matches ?? matches;
     for (const { from, to, status } of decisions) {
       const decision: DecisionRow = { from, to, status };
       this.#decisions.push(decision);
@@ -85,8 +94,10 @@ export class MutualMatchingConcept {
       const match: MatchRow = { first: from, second: to };
       this.#matches.push(match);
       this.#matchesByPair.set(unorderedKey(from, to), match);
+      this.#changed();
       return { matched: true };
     }
+    this.#changed();
     return { matched: false };
   }
 
@@ -100,6 +111,7 @@ export class MutualMatchingConcept {
       throw new PassAfterInterest(PASS_AFTER_INTEREST_DETAIL);
     }
     if (existing === undefined) this.#appendDecision(from, to, "PASSED");
+    this.#changed();
     return {};
   }
 
@@ -111,6 +123,7 @@ export class MutualMatchingConcept {
     this.#matches = this.#matches.filter((candidate) => candidate !== match);
     this.#setPassed(user, other);
     this.#setPassed(other, user);
+    this.#changed();
     return {};
   }
 
@@ -138,6 +151,10 @@ export class MutualMatchingConcept {
   _decision({ from, to }: { from: User; to: User }): Array<{ status: DecisionStatus }> {
     const decision = this.#decisionsByPair.get(orderedKey(from, to));
     return decision === undefined ? [] : [{ status: decision.status }];
+  }
+
+  #changed(): void {
+    this.#persistence?.save({ decisions: plain(this.#decisions), matches: plain(this.#matches) });
   }
 
   #appendDecision(from: User, to: User, status: DecisionStatus): void {

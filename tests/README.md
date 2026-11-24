@@ -1,7 +1,7 @@
 # Tests
 
 `bun run db:up` (local MongoDB), then `bun test`. `bun run test:save` re-saves the summary to
-[`output.txt`](output.txt). Last run: 164 pass, 0 fail, 10 files, with `bun run check` passing.
+[`output.txt`](output.txt). Last run: 166 pass, 0 fail, 11 files, with `bun run check` passing.
 
 Where the tests live (they sit next to the code, in `src/`):
 
@@ -15,6 +15,6 @@ Where the tests live (they sit next to the code, in `src/`):
 Limitations:
 
 - No frontend tests yet; the UI is not covered.
-- Everything but Chatting runs against in-memory stores, so persistence of the other concepts is untested.
+- Persistence is tested by a restart test (`src/persistence.test.ts`) that reassembles the app over the same database. Snapshots are queued writes, so a hard crash can lose the last changes.
 - Runs are local only; the deployed app has not been tested automatically.
 - Authenticating has no unit tests of its own (vendored from the catalog); it is exercised through the integration tests.
