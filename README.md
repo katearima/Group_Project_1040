@@ -4,6 +4,8 @@ Meet the founders and builders you'd want to start something with. Founders find
 
 6.1040 Software Design, Fall 2026. Team: Fidan Huseynova, Ketevan Peranidze, Silk Yu, Raleigh Berman.
 
+**Demo video:** [watch the alpha walkthrough](https://drive.google.com/file/d/1eFvP2ZT7zpum7w1ZEejIvE3hk3y0zp-k/view?usp=sharing)
+
 ## What you can do
 
 - **Sign up and build a profile** as a founder, builder or both, then publish it.
