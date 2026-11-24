@@ -20,7 +20,7 @@ bun run preview          # build, then serve the whole app on :3000 the way the 
 ```
 
 Run `bun install` in `frontend/` too. `bun run check` also type-checks the frontend
-(`vue-tsc`). `bun run up` still references `scripts/check-api.ts`, which does not exist yet.
+(`vue-tsc`). The platform ignores `compose.yaml`; it only provides local MongoDB (`bun run db:up`).
 
 ## Layout
 
@@ -42,7 +42,7 @@ Run `bun install` in `frontend/` too. `bun run check` also type-checks the front
   the typed sync-engine HTTP client over `generated/wire.ts` (`AppWireHttp`), calling
   `/api/...` on the page's own origin; the dev server forwards `/api` to :8080 unchanged.
   `src/styles/tokens.css` holds the palette and fonts from `documentation/colors.png` and
-  `typograhy.png`.
+  `typography.png`.
 - `.sync-engine/work/<slug>/`: sync-engine skill work items (brief, prompts, run records).
 
 ## Status (as of 2026-11-23)

@@ -32,4 +32,4 @@ other path.
 
 ## Assignments
 
-- [F2: Problem Framing](problem-framing/README.md)
+- [F2: Problem Framing](documentation/problem-framing/README.md)
